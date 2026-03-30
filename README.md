@@ -1,6 +1,5 @@
 # Filament Dryer 
 
-DIY filament dryer project with a modeled enclosure, selected components, and custom control firmware.
 
 <p align="center">
   <a href="photo.jpg">
