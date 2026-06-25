@@ -311,6 +311,7 @@ void EnterFlagaa() {
   void PomiarZczujnikow() {
     if (millis() - CzasDane > CoIlePomiar) {
       CzasDane = millis();
+      
       // AHT20: temp + wilgotność
       sensors_event_t hum, temp;
       aht.getEvent(&hum, &temp);

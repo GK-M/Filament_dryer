@@ -10,12 +10,12 @@
 #include "tasks/button_task.h"
 #include "tasks/log_task.h"
 
-TaskHandle_t xSensorTaskHandle  = NULL;
+TaskHandle_t xTempSensorTaskHandle  = NULL;
 TaskHandle_t xControlTaskHandle = NULL;
 TaskHandle_t xDisplayTaskHandle = NULL;
 TaskHandle_t xButtonTaskHandle  = NULL;
 TaskHandle_t xLogTaskHandle     = NULL;
-
+TaskHandle_t xHumTempSensorTask = NULL;
 
 QueueHandle_t xTemperatureQueue = NULL;
 QueueHandle_t xSetpointQueue    = NULL;
@@ -29,10 +29,12 @@ void setup() {
     xLogQueue         = xQueueCreate(10, LOG_MSG_LEN);
 
     xTaskCreate(vLogTask,     "Log",     2048, NULL, 1, &xLogTaskHandle);
-    xTaskCreate(vSensorTask,  "Sensor",  2048, NULL, 3, &xSensorTaskHandle);
+    xTaskCreate(vTempSensorTask,  "Sensor",  2048, NULL, 3, &xTempSensorTaskHandle);
+    xTaskCreate(vHumTempSensorTask, "BMP280", 2048, NULL, 5, &xHumTempSensorTask);
     xTaskCreate(vControlTask, "Control", 2048, NULL, 3, &xControlTaskHandle);
     xTaskCreate(vDisplayTask, "Display", 3072, NULL, 2, &xDisplayTaskHandle);
     xTaskCreate(vButtonTask,  "Button",  1024, NULL, 4, &xButtonTaskHandle);
+
 }
 
 void loop() {
