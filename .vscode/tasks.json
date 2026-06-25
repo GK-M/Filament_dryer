@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "PlatformIO: Build",
+            "command": "C:/Users/ThePi/.platformio/penv/Scripts/platformio.exe",
+            "args": ["run", "--environment", "esp32-c3-devkitm-1"],
+            "group": "build",
+            "presentation": { "reveal": "always" }
+        },
+        {
+            "type": "shell",
+            "label": "PlatformIO: Upload",
+            "command": "C:/Users/ThePi/.platformio/penv/Scripts/platformio.exe",
+            "args": ["run", "--target", "upload", "--environment", "esp32-c3-devkitm-1"],
+            "group": "build",
+            "presentation": { "reveal": "always" }
+        },
+        {
+            "type": "shell",
+            "label": "PlatformIO: Build Filesystem",
+            "command": "C:/Users/ThePi/.platformio/penv/Scripts/platformio.exe",
+            "args": ["run", "--target", "buildfs", "--environment", "esp32-c3-devkitm-1"],
+            "group": "build",
+            "presentation": { "reveal": "always" }
+        }
+    ]
+}

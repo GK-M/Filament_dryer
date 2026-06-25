@@ -1,28 +1,40 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
-
 #include "config.h"
 #include "secrets.h"
+#include "rtos_handles.h"
+#include "tasks/sensor_task.h"
+#include "tasks/control_task.h"
+#include "tasks/display_task.h"
+#include "tasks/button_task.h"
+#include "tasks/log_task.h"
 
-// Ctrl + Shift + Space <- Podpowiedz
+TaskHandle_t xSensorTaskHandle  = NULL;
+TaskHandle_t xControlTaskHandle = NULL;
+TaskHandle_t xDisplayTaskHandle = NULL;
+TaskHandle_t xButtonTaskHandle  = NULL;
+TaskHandle_t xLogTaskHandle     = NULL;
 
 
-// put function declarations here:
-int myFunction(int, int);
+QueueHandle_t xTemperatureQueue = NULL;
+QueueHandle_t xSetpointQueue    = NULL;
+QueueHandle_t xLogQueue         = NULL;
 
 void setup() {
+    Serial.begin(115200);
 
-WiFi.begin()
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+    xTemperatureQueue = xQueueCreate(1,  sizeof(float));
+    xSetpointQueue    = xQueueCreate(1,  sizeof(float));
+    xLogQueue         = xQueueCreate(10, LOG_MSG_LEN);
+
+    xTaskCreate(vLogTask,     "Log",     2048, NULL, 1, &xLogTaskHandle);
+    xTaskCreate(vSensorTask,  "Sensor",  2048, NULL, 3, &xSensorTaskHandle);
+    xTaskCreate(vControlTask, "Control", 2048, NULL, 3, &xControlTaskHandle);
+    xTaskCreate(vDisplayTask, "Display", 3072, NULL, 2, &xDisplayTaskHandle);
+    xTaskCreate(vButtonTask,  "Button",  1024, NULL, 4, &xButtonTaskHandle);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+    vTaskDelete(NULL);
 }
