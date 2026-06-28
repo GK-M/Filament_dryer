@@ -10,6 +10,7 @@
 #include "tasks/button_task.h"
 #include "tasks/log_task.h"
 
+
 TaskHandle_t xTempSensorTaskHandle  = NULL;
 TaskHandle_t xControlTaskHandle = NULL;
 TaskHandle_t xDisplayTaskHandle = NULL;
@@ -17,16 +18,24 @@ TaskHandle_t xButtonTaskHandle  = NULL;
 TaskHandle_t xLogTaskHandle     = NULL;
 TaskHandle_t xHumTempSensorTask = NULL;
 
-QueueHandle_t xTemperatureQueue = NULL;
+QueueHandle_t xI2CsensorsQueue  = NULL;
+QueueHandle_t xDS18B20Queue     = NULL;
 QueueHandle_t xSetpointQueue    = NULL;
 QueueHandle_t xLogQueue         = NULL;
+QueueHandle_t xControlDataQueue = NULL;
+
+
 
 void setup() {
     Serial.begin(115200);
 
-    xTemperatureQueue = xQueueCreate(1,  sizeof(float));
-    xSetpointQueue    = xQueueCreate(1,  sizeof(float));
-    xLogQueue         = xQueueCreate(10, LOG_MSG_LEN);
+    xDS18B20Queue     = xQueueCreate(1,   sizeof(DS_sensors));
+    xI2CsensorsQueue  = xQueueCreate(1,   sizeof(I2C_sensors));
+    xSetpointQueue    = xQueueCreate(1,   sizeof(double));
+    xControlDataQueue = xQueueCreate(1,   sizeof(Control_status));
+    xLogQueue         = xQueueCreate(10,    LOG_MSG_LEN);
+
+  
 
     xTaskCreate(vLogTask,     "Log",     2048, NULL, 1, &xLogTaskHandle);
     xTaskCreate(vTempSensorTask,  "Sensor",  2048, NULL, 3, &xTempSensorTaskHandle);

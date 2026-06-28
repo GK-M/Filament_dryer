@@ -12,7 +12,7 @@ namespace Button{
     constexpr uint8_t PrzyciskEkran = 10; //Long press turn on/off screen
     constexpr uint8_t Increase = 21;
     constexpr uint8_t Decrease = 20;
-    constexpr uint8_t Mode= 5; //Change cooking mode
+    constexpr uint8_t Mode = 5; //Change cooking mode
     constexpr uint8_t Enter = 1; //Subbmit changes
     constexpr uint8_t LedPin = 7;  
 }
@@ -32,6 +32,12 @@ namespace Calibration {
     constexpr float BMP280 = 0.0f;
 }
 
+//DS18B20 adresses
+namespace adrr_DS{
+    constexpr uint8_t addr1[8] = { 0x28, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x01 };
+    constexpr uint8_t addr2[8] = { 0x28, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x01 };
+    constexpr uint8_t addr3[8] = { 0x28, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x01 };
+};
 
 // LCD icons
 inline uint8_t Stopnie[] = {

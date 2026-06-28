@@ -7,12 +7,51 @@
 
 
 // Uchwyty tasków
-extern TaskHandle_t xSensorTaskHandle;
+extern TaskHandle_t xTempSensorTaskHandle;
+extern TaskHandle_t xHumTempSensorTask;
 extern TaskHandle_t xControlTaskHandle;
 extern TaskHandle_t xDisplayTaskHandle;
 extern TaskHandle_t xButtonTaskHandle;
+extern TaskHandle_t xLogTaskHandle;
 
 // Kolejki do komunikacji między taskami
-extern QueueHandle_t xTemperatureQueue;  
-extern QueueHandle_t xSetpointQueue;     
-extern QueueHandle_t xLogQueue;          
+extern QueueHandle_t xDS18B20Queue;
+extern QueueHandle_t xI2CsensorsQueue;
+extern QueueHandle_t xSetpointQueue;
+extern QueueHandle_t xLogQueue;
+extern QueueHandle_t xControlDataQueue;
+
+
+    struct I2C_sensors{
+        float temp_aht = 0.0f;
+        float hum_aht = 0.0f;
+        float t_bmp = 0.0f;
+        float p_hPa = 0.0f;
+    };
+    
+    struct DS_sensors{
+        float DS_1 = 0.0f;
+        float DS_2 = 0.0f;
+        float DS_3 = 0.0f;
+        bool error = false;
+    };
+    
+    struct PID_data{
+        // Nastawy 
+        double Setpoint = 0;  // zadana (np. °C)
+        double Input = 0;     // pomiar
+        double Output = 0.0;  // wyjście PID (0..100)
+        int16_t SetSampleTime = 1000;
+        int16_t freq = 1000;
+        float Kp = 2.25, Ki = 0.05, Kd = 0.0;
+        uint8_t rozdzielczosc = 10;
+    
+    };  
+    
+    struct Control_status
+    {
+        float Output = 0.0;
+        float Setpoint = 0.0;
+        bool active = false;
+    };
+    

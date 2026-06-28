@@ -702,7 +702,7 @@ void EnterFlagaa() {
     analogWriteFrequency(FAN_PWM, freq);
 
     //Ustawienie PWM grzałki
-    analogWriteResolution(COOK_PWM, resolution);  // 10-bit -> 0..1023
+    analogWriteResolution(COOK _PWM, resolution);  // 10-bit -> 0..1023
     analogWriteFrequency(COOK_PWM, freqCook);
 
     
