@@ -16,8 +16,8 @@ void vControlTask(void *pvParameters) {
 
     PID pid(&pid_data.Input, &pid_data.Output, &pid_data.Setpoint, pid_data.Kp, pid_data.Ki, pid_data.Kd, DIRECT);
     
-    pid.SetOutputLimits(0, 1023);  // WYJŚCIE 0..100
-    pid.SetSampleTime(pid_data.SetSampleTime);       // ms; 
+    pid.SetOutputLimits(0, 1023);  
+    pid.SetSampleTime(pid_data.SetSampleTime);       
     pid.SetMode(AUTOMATIC);
 
     ledcSetup(0, pid_data.freq, pid_data.rozdzielczosc);        // kanał, freq, rozdzielczość
@@ -25,20 +25,24 @@ void vControlTask(void *pvParameters) {
 
 
     for (;;) {
-
-        xQueuePeek(xSetpointQueue, &pid_data.Setpoint, pdMS_TO_TICKS(250));
+        // Na razie nie używam, ale w przyszłości setpoint/kp/ki/kd będzie ustawiany z poziomu ekranu
+        xQueuePeek(xSetpointQueue, &pid_data, pdMS_TO_TICKS(250)); 
         
+        // Dane z czujników I2C      
         if(!xQueuePeek(xI2CsensorsQueue,&i2c_sensors, pdMS_TO_TICKS(1000))){
-            LOG("Bład przesłaia danych z kolejki xI2CsensorsQueue");
+            LOG("Bład przesłania danych z kolejki xI2CsensorsQueue");
         }
+        
+        // Dane z one-Wire (DS18B20)
         if(!xQueuePeek(xDS18B20Queue,&ds_sensors, pdMS_TO_TICKS(1000))){
-            LOG("Bład przesłaia danych z kolejki xDS18B20Queue");
+            LOG("Bład przesłania danych z kolejki xDS18B20Queue");
         }
 
+        /* Zmina w trakcie działania suszarki */
         pid.SetTunings(pid_data.Kp, pid_data.Ki, pid_data.Kd);
         pid_data.Input = i2c_sensors.temp_aht;
         pid.Compute();
-        ledcWrite(0, pid_data.Output);
+        ledcWrite(0, pid_data.Output); // kanał 0 jest przypisany do pinu COOK_PWM
 
         if(pid_data.Output > 0) control_status.active = true;
         else control_status.active = false;
@@ -51,9 +55,7 @@ void vControlTask(void *pvParameters) {
         xQueueOverwrite(xControlDataQueue,&control_status);
 
         vTaskDelay(pdMS_TO_TICKS(1000));
-        
-
-
+    
 
        
     }
