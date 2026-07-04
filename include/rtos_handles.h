@@ -68,10 +68,27 @@ extern QueueHandle_t xButtonQueue;
         uint32_t timestamp;
     };
 
+
     enum class ButtonAction {
         INCREASE,
         DECREASE,
         MODE,
         ENTER,
-        PRZYCISK_EKRAN // potwierdzenie
+        PRZYCISK_EKRAN // potwierdzenie, zmiana co edytowane
+    };
+
+    enum class Screen {
+        Main,
+        Sensors_data,
+        PID_cook,
+        PID_fan,
+        COUNT 
+    };
+
+    enum class EditVar {
+        Setpoint,
+        Time,
+        Kp,
+        Ki,
+        Kd,
     };
