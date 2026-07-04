@@ -34,7 +34,7 @@ void vButtonTask(void *pvParameters) {
     
     //tablica do przechowywania ostatnich czasów naciśnięć przycisków 
     uint32_t lastPress[22] = {0};
-    ButtonRAW event; 
+    ButtonRAW buttonRAW; 
     PID_data pid_data;
     Preferences preferences;
     Screen current_screen;
@@ -43,24 +43,27 @@ void vButtonTask(void *pvParameters) {
 
     for(;;){
 
-    xQueueReceive(xButtonQueue, &event, portMAX_DELAY);
+    xQueueReceive(xButtonQueue, &buttonRAW, portMAX_DELAY);
 
     //Next strona
-    if(event.timestamp - lastPress[event.pin] > 50 && event.edge == ButtonEdge::PRESSED && event.pin == Button::Enter){
-       lastPress[event.pin] = event.timestamp;
+    if(buttonRAW.timestamp - lastPress[buttonRAW.pin] > Timing::DEBOUNCE_MS && buttonRAW.edge == ButtonEdge::PRESSED && buttonRAW.pin == Button::Enter){
+       lastPress[buttonRAW.pin] = buttonRAW.timestamp;
        current_screen = static_cast<Screen>((static_cast<uint8_t>(current_screen) + 1) % static_cast<uint8_t>(Screen::COUNT));
     }
 
     //Tryby pracy - kiedyś to zrobię 
-    if(event.timestamp - lastPress[event.pin] > 50 && event.edge == ButtonEdge::PRESSED && event.pin == Button::Mode){
-       lastPress[event.pin] = event.timestamp;
+    if(buttonRAW.timestamp - lastPress[buttonRAW.pin] > Timing::DEBOUNCE_MS && buttonRAW.edge == ButtonEdge::PRESSED && buttonRAW.pin == Button::Mode){
+       lastPress[buttonRAW.pin] = buttonRAW.timestamp;
        mode = static_cast<Mode>((static_cast<uint8_t>(mode) + 1) % static_cast<uint8_t>(Mode::COUNT));
+    }
+    // Next zmienna w zależności od aktualnego ekranu
+    if(buttonRAW.timestamp - lastPress[buttonRAW.pin] > Timing::DEBOUNCE_MS && buttonRAW.edge == ButtonEdge::PRESSED && buttonRAW.pin == Button::PrzyciskEkran){
+ 
 
     }
-
     //UP
-    if(event.timestamp - lastPress[event.pin] > 50 && event.edge == ButtonEdge::PRESSED && event.pin == Button::Increase){
-        lastPress[event.pin] = event.timestamp;
+    if(buttonRAW.timestamp - lastPress[buttonRAW.pin] > 50 && buttonRAW.edge == ButtonEdge::PRESSED && buttonRAW.pin == Button::Increase){
+        lastPress[buttonRAW.pin] = buttonRAW.timestamp;
 
         switch(current_screen){
 
@@ -96,8 +99,8 @@ void vButtonTask(void *pvParameters) {
     }
 
     //DOWN
-    if(event.timestamp - lastPress[event.pin] > 50 && event.edge == ButtonEdge::PRESSED && event.pin == Button::Decrease){
-        lastPress[event.pin] = event.timestamp;
+    if(buttonRAW.timestamp - lastPress[buttonRAW.pin] > 50 && buttonRAW.edge == ButtonEdge::PRESSED && buttonRAW.pin == Button::Decrease){
+        lastPress[buttonRAW.pin] = buttonRAW.timestamp;
 
         switch(current_screen){
 

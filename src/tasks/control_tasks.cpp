@@ -55,7 +55,7 @@ void vControlTask(void *pvParameters) {
         //Wysyłane dane z PID
         xQueueOverwrite(xControlDataQueue,&control_status);
 
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(Timing::PID_COMPUTING));
        
     }
 }

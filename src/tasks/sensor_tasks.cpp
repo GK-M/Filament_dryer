@@ -48,7 +48,7 @@ void vTempSensorTask(void *pvParameters) {
     }
 
     xQueueOverwrite(xDS18B20Queue, &DS_sensors);
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    vTaskDelay(pdMS_TO_TICKS(Timing::SENSOR_READ_MS));
 
     }
 }
@@ -90,6 +90,6 @@ void vHumTempSensorTask(void *pvParameters){
     
     xQueueOverwrite(xI2CsensorsQueue, &I2C_sensors);
     
-    vTaskDelay(pdMS_TO_TICKS(500));
+    vTaskDelay(pdMS_TO_TICKS(Timing::SENSOR_I2C_READ_MS));
     }
 }
