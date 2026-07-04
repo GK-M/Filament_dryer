@@ -24,7 +24,7 @@ void vButtonTask(void *pvParameters) {
     pinMode(Button::Mode,         INPUT_PULLUP);
     pinMode(Button::Enter,        INPUT_PULLUP);
     pinMode(Button::PrzyciskEkran,INPUT_PULLUP);
-    pinMode(Button::LedPin,             OUTPUT);
+
 
     attachInterruptArg(Button::Increase,      isrButton, (void*)Button::Increase,      CHANGE);
     attachInterruptArg(Button::Decrease,      isrButton, (void*)Button::Decrease,      CHANGE);
@@ -58,7 +58,25 @@ void vButtonTask(void *pvParameters) {
     }
     // Next zmienna w zależności od aktualnego ekranu
     if(buttonRAW.timestamp - lastPress[buttonRAW.pin] > Timing::DEBOUNCE_MS && buttonRAW.edge == ButtonEdge::PRESSED && buttonRAW.pin == Button::PrzyciskEkran){
- 
+        
+        lastPress[buttonRAW.pin] = buttonRAW.timestamp;
+        
+        switch(current_screen){
+
+        case Screen::Main:
+            if(current_var == EditVar::Setpoint) current_var = EditVar::Time;
+            else current_var = EditVar::Setpoint;
+            break;
+
+        case Screen::PID_cook:
+
+            if(current_var == EditVar::Kp) current_var = EditVar::Ki;
+            else if(current_var == EditVar::Ki) current_var = EditVar::Kd;
+            else current_var = EditVar::Kp;
+        
+            break;
+        
+        }
 
     }
     //UP
@@ -84,14 +102,17 @@ void vButtonTask(void *pvParameters) {
                 switch(current_var){
                     case EditVar::Kp:
                         pid_data.Kp += 0.1;
+                        if(pid_data.Kp > pid_data.Kp_max) pid_data.Kp = 0.0;
                         xQueueOverwrite(xSetpointQueue, &pid_data.Kp);
                         break;
                     case EditVar::Ki:
                         pid_data.Ki += 0.01;
+                        if(pid_data.Ki > pid_data.Ki_max) pid_data.Ki = 0.0;
                         xQueueOverwrite(xSetpointQueue, &pid_data.Ki);
                         break;
                     case EditVar::Kd:
                         pid_data.Kd += 0.01;
+                        if(pid_data.Kd > pid_data.Kd_max) pid_data.Kd = 0.0;
                         xQueueOverwrite(xSetpointQueue, &pid_data.Kd);
                         break;
                 }

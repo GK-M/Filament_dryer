@@ -37,19 +37,7 @@ extern QueueHandle_t xButtonQueue;
         bool error = false;
     };
     
-    // Task Control
-    struct PID_data{
 
-        // Nastawy 
-        double Setpoint = 0;  // zadana 
-        double Input = 0;     // pomiar
-        double Output = 0.0;  // wyjście PID
-        int16_t SetSampleTime = 1000;
-        int16_t freq = 1000;
-        float Kp = 2.25, Ki = 0.05, Kd = 0.0;
-        uint8_t rozdzielczosc = 10;
-    
-    };  
 
     struct Control_status
     {

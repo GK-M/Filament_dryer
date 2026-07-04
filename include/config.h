@@ -7,14 +7,14 @@ namespace Pin {
     constexpr uint8_t ONE_WIRE_BUS = 3;
     constexpr uint8_t FAN_PWM = 4;
     constexpr uint8_t COOK_PWM  = 2;
+    constexpr uint8_t LedPin = 7;  
 }
 namespace Button{
     constexpr uint8_t PrzyciskEkran = 10; //Long press turn on/off screen
     constexpr uint8_t Increase = 21;
     constexpr uint8_t Decrease = 20;
     constexpr uint8_t Mode = 5; //Change cooking mode
-    constexpr uint8_t Enter = 1; //Subbmit changes
-    constexpr uint8_t LedPin = 7;  
+    constexpr uint8_t Enter = 1; 
 }
 namespace I2C {
     constexpr uint8_t SDA = 8;
@@ -28,7 +28,7 @@ namespace Timing {
     constexpr uint32_t HOLD_MS        = 500;
     constexpr uint32_t SENSOR_READ_MS = 1000;
     constexpr uint32_t SENSOR_I2C_READ_MS = 500;
-    constexpr uint32_t PID_COMPUTING = 1000;
+    constexpr uint32_t PID_COMPUTING   = 1000;
 }
 
 namespace Calibration {
@@ -45,6 +45,19 @@ namespace adrr_DS{
     constexpr uint8_t addr2[8] = { 0x28, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x01 };
     constexpr uint8_t addr3[8] = { 0x28, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x01 };
 };
+
+// TNastawy PID
+struct PID_data{
+    double Setpoint = 0;  // zadana 
+    double Input = 0;     // pomiar
+    double Output = 0.0;  // wyjście PID
+    int16_t SetSampleTime = 1000;
+    int16_t freq = 1000;
+    float Kp = 2.25, Ki = 0.05, Kd = 0.0;
+    uint8_t rozdzielczosc = 10;
+    float Kp_max = 20.0, Ki_max = 10.0, Kd_max = 5.0;
+
+};  
 
 // LCD icons
 inline uint8_t Stopnie[] = {
