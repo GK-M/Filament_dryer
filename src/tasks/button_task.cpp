@@ -39,16 +39,22 @@ void vButtonTask(void *pvParameters) {
     Preferences preferences;
     Screen current_screen;
     EditVar current_var;
+    Mode mode;
 
     for(;;){
 
     xQueueReceive(xButtonQueue, &event, portMAX_DELAY);
 
     //Next strona
-    if(event.timestamp - lastPress[event.pin] > 50 && event.edge== ButtonEdge::PRESSED && event.pin == Button::Enter){
-       current_screen = static_cast<Screen>(
-     (static_cast<uint8_t>(current_screen) + 1) % static_cast<uint8_t>(Screen::COUNT));
-        lastPress[event.pin] = event.timestamp;
+    if(event.timestamp - lastPress[event.pin] > 50 && event.edge == ButtonEdge::PRESSED && event.pin == Button::Enter){
+       lastPress[event.pin] = event.timestamp;
+       current_screen = static_cast<Screen>((static_cast<uint8_t>(current_screen) + 1) % static_cast<uint8_t>(Screen::COUNT));
+    }
+
+    //Tryby pracy - kiedyś to zrobię 
+    if(event.timestamp - lastPress[event.pin] > 50 && event.edge == ButtonEdge::PRESSED && event.pin == Button::Mode){
+       lastPress[event.pin] = event.timestamp;
+       mode = static_cast<Mode>((static_cast<uint8_t>(mode) + 1) % static_cast<uint8_t>(Mode::COUNT));
 
     }
 
@@ -126,8 +132,15 @@ void vButtonTask(void *pvParameters) {
     
     }
  
+
+
+
+
+
+
+
   }
  
- }
+}
 
 

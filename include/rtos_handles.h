@@ -92,3 +92,11 @@ extern QueueHandle_t xButtonQueue;
         Ki,
         Kd,
     };
+
+    enum class Mode {
+        Mode_1,
+        Mode_2,
+        Mode_3,
+        Mode_4,
+        COUNT,
+    };
