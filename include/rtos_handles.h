@@ -13,6 +13,8 @@ extern TaskHandle_t xControlTaskHandle;
 extern TaskHandle_t xDisplayTaskHandle;
 extern TaskHandle_t xButtonTaskHandle;
 extern TaskHandle_t xLogTaskHandle;
+extern TaskHandle_t xLedTaskHandle;
+extern TaskHandle_t xFanTaskHandle;
 
 // Kolejki do komunikacji między taskami
 extern QueueHandle_t xDS18B20Queue;

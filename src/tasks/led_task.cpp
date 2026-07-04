@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "config.h"
 #include "rtos_handles.h"
+#include "tasks/log_task.h"
 
 
 

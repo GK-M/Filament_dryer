@@ -9,6 +9,8 @@
 #include "tasks/display_task.h"
 #include "tasks/button_task.h"
 #include "tasks/log_task.h"
+#include "tasks/led_task.h" 
+#include "tasks/fan_task.h"
 
 
 TaskHandle_t xTempSensorTaskHandle  = NULL;
@@ -17,6 +19,9 @@ TaskHandle_t xDisplayTaskHandle = NULL;
 TaskHandle_t xButtonTaskHandle  = NULL;
 TaskHandle_t xLogTaskHandle     = NULL;
 TaskHandle_t xHumTempSensorTask = NULL;
+TaskHandle_t xLedTaskHandle     = NULL;
+TaskHandle_t xFanTaskHandle     = NULL;
+
 
 QueueHandle_t xI2CsensorsQueue  = NULL;
 QueueHandle_t xDS18B20Queue     = NULL;
@@ -44,6 +49,8 @@ void setup() {
     xTaskCreate(vControlTask, "Control", 2048, NULL, 3, &xControlTaskHandle);
     xTaskCreate(vDisplayTask, "Display", 3072, NULL, 2, &xDisplayTaskHandle);
     xTaskCreate(vButtonTask,  "Button",  1024, NULL, 4, &xButtonTaskHandle);
+    xTaskCreate(vLedTask,     "Led",     1024, NULL, 1, &xLedTaskHandle);
+    xTaskCreate(vFanTask,     "Fan",     1024, NULL, 1, &xFanTaskHandle);
 
 }
 

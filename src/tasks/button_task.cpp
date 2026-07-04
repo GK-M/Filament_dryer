@@ -56,7 +56,9 @@ void vButtonTask(void *pvParameters) {
        lastPress[buttonRAW.pin] = buttonRAW.timestamp;
        mode = static_cast<Mode>((static_cast<uint8_t>(mode) + 1) % static_cast<uint8_t>(Mode::COUNT));
     }
-    // Next zmienna w zależności od aktualnego ekranu
+
+
+    // Next - zmienna w zależności od aktualnego ekranu
     if(buttonRAW.timestamp - lastPress[buttonRAW.pin] > Timing::DEBOUNCE_MS && buttonRAW.edge == ButtonEdge::PRESSED && buttonRAW.pin == Button::PrzyciskEkran){
         
         lastPress[buttonRAW.pin] = buttonRAW.timestamp;
@@ -79,8 +81,9 @@ void vButtonTask(void *pvParameters) {
         }
 
     }
+
     //UP
-    if(buttonRAW.timestamp - lastPress[buttonRAW.pin] > 50 && buttonRAW.edge == ButtonEdge::PRESSED && buttonRAW.pin == Button::Increase){
+    if(buttonRAW.timestamp - lastPress[buttonRAW.pin] > Timing::DEBOUNCE_MS && buttonRAW.edge == ButtonEdge::PRESSED && buttonRAW.pin == Button::Increase){
         lastPress[buttonRAW.pin] = buttonRAW.timestamp;
 
         switch(current_screen){
@@ -120,7 +123,7 @@ void vButtonTask(void *pvParameters) {
     }
 
     //DOWN
-    if(buttonRAW.timestamp - lastPress[buttonRAW.pin] > 50 && buttonRAW.edge == ButtonEdge::PRESSED && buttonRAW.pin == Button::Decrease){
+    if(buttonRAW.timestamp - lastPress[buttonRAW.pin] > Timing::DEBOUNCE_MS && buttonRAW.edge == ButtonEdge::PRESSED && buttonRAW.pin == Button::Decrease){
         lastPress[buttonRAW.pin] = buttonRAW.timestamp;
 
         switch(current_screen){
@@ -158,7 +161,11 @@ void vButtonTask(void *pvParameters) {
  
 
 
-
+/*
+Dodać kolejke do przesłania danych do taska z wyświetlaczem 
+min. setpoin i nowe wartości dla PID,
+dodać zapis tych wartośći Pid do Pamięci flash
+*/
 
 
 
