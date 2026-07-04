@@ -55,8 +55,6 @@ void vControlTask(void *pvParameters) {
         xQueueOverwrite(xControlDataQueue,&control_status);
 
         vTaskDelay(pdMS_TO_TICKS(1000));
-    
-
        
     }
 }

@@ -20,6 +20,7 @@ extern QueueHandle_t xI2CsensorsQueue;
 extern QueueHandle_t xSetpointQueue;
 extern QueueHandle_t xLogQueue;
 extern QueueHandle_t xControlDataQueue;
+extern QueueHandle_t xButtonQueue;
 
 
     struct I2C_sensors{
@@ -36,6 +37,7 @@ extern QueueHandle_t xControlDataQueue;
         bool error = false;
     };
     
+    // Task Control
     struct PID_data{
 
         // Nastawy 
@@ -48,7 +50,7 @@ extern QueueHandle_t xControlDataQueue;
         uint8_t rozdzielczosc = 10;
     
     };  
-    
+
     struct Control_status
     {
         float Output = 0.0;
@@ -56,3 +58,20 @@ extern QueueHandle_t xControlDataQueue;
         bool active = false;
     };
     
+    // Taski Button 
+
+    enum class ButtonEdge {PRESSED, RELEASED};
+
+    struct ButtonRAW{
+        uint8_t pin= 0;
+        ButtonEdge edge;
+        uint32_t timestamp;
+    };
+
+    enum class ButtonAction {
+        INCREASE,
+        DECREASE,
+        MODE,
+        ENTER,
+        PRZYCISK_EKRAN // potwierdzenie
+    };

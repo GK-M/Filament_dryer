@@ -23,6 +23,7 @@ QueueHandle_t xDS18B20Queue     = NULL;
 QueueHandle_t xSetpointQueue    = NULL;
 QueueHandle_t xLogQueue         = NULL;
 QueueHandle_t xControlDataQueue = NULL;
+QueueHandle_t xButtonQueue      = NULL;
 
 
 
@@ -31,10 +32,10 @@ void setup() {
 
     xDS18B20Queue     = xQueueCreate(1,   sizeof(DS_sensors));
     xI2CsensorsQueue  = xQueueCreate(1,   sizeof(I2C_sensors));
-    xSetpointQueue    = xQueueCreate(1,   sizeof(double));
+    xSetpointQueue    = xQueueCreate(1,   sizeof(PID_data));
     xControlDataQueue = xQueueCreate(1,   sizeof(Control_status));
     xLogQueue         = xQueueCreate(10,    LOG_MSG_LEN);
-
+    xButtonQueue      = xQueueCreate(10,   sizeof(ButtonRAW));
   
 
     xTaskCreate(vLogTask,     "Log",     2048, NULL, 1, &xLogTaskHandle);

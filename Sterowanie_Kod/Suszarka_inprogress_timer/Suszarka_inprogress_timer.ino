@@ -9,7 +9,7 @@
 
 #include <PID_v1.h>
 
-LiquidCrystal_I2C lcd(0x27, 20, 4);  // 16 kolumn, 2 wiersze
+LiquidCrystal_I2C lcd(0x27, 20, 4);  // 20 kolumn, 4 wiersze
 Adafruit_AHTX0 aht;
 Adafruit_BMP280 bmp;
 
@@ -688,6 +688,7 @@ void EnterFlagaa() {
     pinMode(Decrease, INPUT_PULLUP);       // minus wartość zadana
     pinMode(PrzyciskTryb, INPUT_PULLUP);   // przycisk do trybów
     pinMode(Enter, INPUT_PULLUP);          //Przycisk od zatwierdzania
+    
     //LED
     analogWriteResolution(LedPin, resolution);  // 10-bit -> 0..1023
     analogWriteFrequency(LedPin, freq);
