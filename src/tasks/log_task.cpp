@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "tasks/log_task.h"
 #include "rtos_handles.h"
-#include "tasks/log_task.h"
+
 
 
 void vLogTask(void *pvParameters) {

@@ -30,9 +30,6 @@ void vTempSensorTask(void *pvParameters) {
     DS_sensors.DS_1 = sensors.getTempC(Heater_1) + Calibration::DS_1;
     DS_sensors.DS_2 = sensors.getTempC(Heater_2) + Calibration::DS_2;
     DS_sensors.DS_3 = sensors.getTempC(Heater_3) + Calibration::DS_3;
-    LOG("Temp DS_1: %.1f", DS_sensors.DS_1 );
-    LOG("Temp DS_2: %.1f", DS_sensors.DS_2 );
-    LOG("Temp DS_3: %.1f", DS_sensors.DS_3 );
 
     if(DS_sensors.DS_1 == -127.0){
         LOG("Heater_1: brak czujnika / błąd czujnika");
@@ -46,6 +43,10 @@ void vTempSensorTask(void *pvParameters) {
         LOG("Heater_3: brak czujnika / błąd czujnika");
         DS_sensors.error = true;
     }
+
+    LOG("Temp DS_1: %.1f", DS_sensors.DS_1 );
+    LOG("Temp DS_2: %.1f", DS_sensors.DS_2 );
+    LOG("Temp DS_3: %.1f", DS_sensors.DS_3 );
 
     xQueueOverwrite(xDS18B20Queue, &DS_sensors);
     vTaskDelay(pdMS_TO_TICKS(Timing::SENSOR_READ_MS));

@@ -2,6 +2,7 @@
 #include <Preferences.h>
 
 #include "tasks/button_task.h"
+#include "tasks/log_task.h"
 #include "rtos_handles.h"
 #include "config.h"
 
@@ -41,6 +42,11 @@ void vButtonTask(void *pvParameters) {
     EditVar current_var;
     Mode mode;
 
+    current_var = EditVar::Setpoint;
+    current_screen = Screen::Main;
+    mode = Mode::Mode_1;
+
+
     for(;;){
 
     xQueueReceive(xButtonQueue, &buttonRAW, portMAX_DELAY);
@@ -65,18 +71,18 @@ void vButtonTask(void *pvParameters) {
         
         switch(current_screen){
 
-        case Screen::Main:
-            if(current_var == EditVar::Setpoint) current_var = EditVar::Time;
-            else current_var = EditVar::Setpoint;
-            break;
+            case Screen::Main:
+                if(current_var == EditVar::Setpoint) current_var = EditVar::Time;
+                else current_var = EditVar::Setpoint;
+                break;
 
-        case Screen::PID_cook:
+            case Screen::PID_cook:
 
-            if(current_var == EditVar::Kp) current_var = EditVar::Ki;
-            else if(current_var == EditVar::Ki) current_var = EditVar::Kd;
-            else current_var = EditVar::Kp;
-        
-            break;
+                if(current_var == EditVar::Kp) current_var = EditVar::Ki;
+                else if(current_var == EditVar::Ki) current_var = EditVar::Kd;
+                else current_var = EditVar::Kp;
+            
+                break;
         
         }
 
@@ -93,32 +99,50 @@ void vButtonTask(void *pvParameters) {
                     case EditVar::Setpoint:
                         pid_data.Setpoint += 5.0;
                         if(pid_data.Setpoint > 100.0) pid_data.Setpoint = 100.0;
-                        xQueueOverwrite(xSetpointQueue, &pid_data.Setpoint);
+                        LOG("Setpoint is equal to: %f", pid_data.Setpoint);
+                        xQueueOverwrite(xSetpointQueue, &pid_data);
                         break;
 
                     case EditVar::Time:
                         // Implementacja zwiększania czasu
                         break;
                 }
-            
+            break;
+
             case Screen::PID_cook:
                 switch(current_var){
                     case EditVar::Kp:
                         pid_data.Kp += 0.1;
                         if(pid_data.Kp > pid_data.Kp_max) pid_data.Kp = 0.0;
-                        xQueueOverwrite(xSetpointQueue, &pid_data.Kp);
+                        //zapis do pamięci flash
+                        preferences.begin("Kp", false);
+                        preferences.putFloat("Kp",pid_data.Kp);
+                        preferences.end();
+                        LOG("Kp is equal to: %f", pid_data.Kp);
+                        xQueueOverwrite(xSetpointQueue, &pid_data);
                         break;
                     case EditVar::Ki:
                         pid_data.Ki += 0.01;
                         if(pid_data.Ki > pid_data.Ki_max) pid_data.Ki = 0.0;
-                        xQueueOverwrite(xSetpointQueue, &pid_data.Ki);
+                       //zapis do pamięci flash 
+                        preferences.begin("Ki", false);
+                        preferences.putFloat("Ki",pid_data.Ki);
+                        preferences.end();
+                        LOG("Ki is equal to: %f", pid_data.Ki);
+                        xQueueOverwrite(xSetpointQueue, &pid_data);
                         break;
                     case EditVar::Kd:
                         pid_data.Kd += 0.01;
                         if(pid_data.Kd > pid_data.Kd_max) pid_data.Kd = 0.0;
-                        xQueueOverwrite(xSetpointQueue, &pid_data.Kd);
+                        //zapis do pamięci flash
+                        preferences.begin("Kd", false); //fals -> odczyt i zapis, true -> tylko odczyt
+                        preferences.putFloat("Kd",pid_data.Kd);
+                        preferences.end();
+                        LOG("Kd is equal to: %f", pid_data.Kd);
+                        xQueueOverwrite(xSetpointQueue, &pid_data);
                         break;
                 }
+            break;
         }
     }
 
@@ -133,28 +157,46 @@ void vButtonTask(void *pvParameters) {
                     case EditVar::Setpoint:
                         pid_data.Setpoint -= 5.0;
                         if(pid_data.Setpoint < 0.0) pid_data.Setpoint = 0.0;
-                        xQueueOverwrite(xSetpointQueue, &pid_data.Setpoint);
+                        LOG("Setpoint is equal to: %f", pid_data.Setpoint);
+                        xQueueOverwrite(xSetpointQueue, &pid_data);
                         break;
                     case EditVar::Time:
                         // Implementacja zmniejszania czasu
                         break;
                 }
+            break;
             
             case Screen::PID_cook:
                 switch(current_var){
                     case EditVar::Kp:
                         pid_data.Kp -= 0.1;
-                        xQueueOverwrite(xSetpointQueue, &pid_data.Kp);
+                        LOG("Kp is equal to: %f", pid_data.Kp);
+                        //zapis do pamięci flash
+                        preferences.begin("Kp", false);
+                        preferences.putFloat("Kp",pid_data.Kp);
+                        preferences.end();
+                        xQueueOverwrite(xSetpointQueue, &pid_data);
                         break;
                     case EditVar::Ki:
                         pid_data.Ki -= 0.01;
-                        xQueueOverwrite(xSetpointQueue, &pid_data.Ki);
+                        LOG("Ki is equal to: %f", pid_data.Ki);
+                        //zapis do pamięci flash
+                        preferences.begin("Ki", false);
+                        preferences.putFloat("Ki",pid_data.Ki);
+                        preferences.end();
+                        xQueueOverwrite(xSetpointQueue, &pid_data);
                         break;
                     case EditVar::Kd:
                         pid_data.Kd -= 0.01;
-                        xQueueOverwrite(xSetpointQueue, &pid_data.Kd);
+                        LOG("Kd is equal to: %f", pid_data.Kd);
+                        //zapis do pamięci flash
+                        preferences.begin("Kd", false);
+                        preferences.putFloat("Kd",pid_data.Kd);
+                        preferences.end();
+                        xQueueOverwrite(xSetpointQueue, &pid_data);
                         break;
                 }
+            break;
         }
     
     }

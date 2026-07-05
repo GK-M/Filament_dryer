@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <PID_v1.h>
+#include <Preferences.h>
 
 
 #include "tasks/control_task.h"
@@ -14,6 +15,19 @@ void vControlTask(void *pvParameters) {
 
     PID_data pid_data;    
     Control_status control_status;
+    Preferences preferences;
+    
+    preferences.begin("Kp", false);
+    pid_data.Kp = preferences.getFloat("Kp", pid_data.Kp);
+    preferences.end();
+    
+    preferences.begin("Ki", false);
+    pid_data.Ki = preferences.getFloat("Ki", pid_data.Ki);
+    preferences.end();
+
+    preferences.begin("Kd", false);
+    pid_data.Kd = preferences.getFloat("Kd", pid_data.Kd);
+    preferences.end();
 
     PID pid(&pid_data.Input, &pid_data.Output, &pid_data.Setpoint, pid_data.Kp, pid_data.Ki, pid_data.Kd, DIRECT);
     
