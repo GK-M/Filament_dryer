@@ -5,6 +5,14 @@
 #include <freertos/queue.h>
 #include <freertos/semphr.h>
 
+// Kolejki do komunikacji między taskami
+extern QueueHandle_t xDS18B20Queue;
+extern QueueHandle_t xI2CsensorsQueue;
+extern QueueHandle_t xSetpointQueue;
+extern QueueHandle_t xLogQueue;
+extern QueueHandle_t xControlDataQueue;
+extern QueueHandle_t xButtonQueue;
+extern QueueHandle_t xTimerQueue;
 
 // Uchwyty tasków
 extern TaskHandle_t xTempSensorTaskHandle;
@@ -16,14 +24,6 @@ extern TaskHandle_t xLogTaskHandle;
 extern TaskHandle_t xLedTaskHandle;
 extern TaskHandle_t xFanTaskHandle;
 
-// Kolejki do komunikacji między taskami
-extern QueueHandle_t xDS18B20Queue;
-extern QueueHandle_t xI2CsensorsQueue;
-extern QueueHandle_t xSetpointQueue;
-extern QueueHandle_t xLogQueue;
-extern QueueHandle_t xControlDataQueue;
-extern QueueHandle_t xButtonQueue;
-extern QueueHandle_t xTimerQueue;
 
 
     struct I2C_sensors{

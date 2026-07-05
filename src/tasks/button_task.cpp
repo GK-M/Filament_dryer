@@ -46,7 +46,7 @@ void vButtonTask(void *pvParameters) {
     uint32_t active_held_pin = 0;       
     uint32_t hold_start_time = 0;       
     uint32_t last_repeat_time = 0;      
-    const uint32_t REPEAT_DELAY_MS = 250;
+    const uint32_t REPEAT_DELAY_MS = 500;
 
     current_var = EditVar::Setpoint;
     current_screen = Screen::Main;
@@ -55,7 +55,7 @@ void vButtonTask(void *pvParameters) {
 
     for(;;){
 
-    if(xQueueReceive(xButtonQueue, &buttonRAW, pdMS_TO_TICKS(300)) == pdTRUE){
+    if(xQueueReceive(xButtonQueue, &buttonRAW, pdMS_TO_TICKS(550)) == pdTRUE){
 
     if(buttonRAW.timestamp - lastPress[buttonRAW.pin] < Timing::DEBOUNCE_MS) {
         continue; 
