@@ -16,7 +16,7 @@ void vControlTask(void *pvParameters) {
     PID_data pid_data;    
     Control_status control_status;
     Preferences preferences;
-    
+
     preferences.begin("Kp", false);
     pid_data.Kp = preferences.getFloat("Kp", pid_data.Kp);
     preferences.end();
@@ -35,21 +35,21 @@ void vControlTask(void *pvParameters) {
     pid.SetSampleTime(pid_data.SetSampleTime);       
     pid.SetMode(AUTOMATIC);
 
-    ledcSetup(0, pid_data.freq, pid_data.rozdzielczosc);        // kanał, freq, rozdzielczość
+    ledcSetup(0, pid_data.freq, pid_data.rozdzielczosc);// kanał, freq, rozdzielczość
     ledcAttachPin(Pin::COOK_PWM, 0); // pin, kanał
 
 
     for (;;) {
-        // Na razie nie używam, ale w przyszłości setpoint/kp/ki/kd będzie ustawiany z poziomu ekranu
+
         xQueuePeek(xSetpointQueue, &pid_data, pdMS_TO_TICKS(250)); 
         
         // Dane z czujników I2C      
-        if(!xQueuePeek(xI2CsensorsQueue,&i2c_sensors, pdMS_TO_TICKS(1000))){
+        if(!xQueuePeek(xI2CsensorsQueue,&i2c_sensors, pdMS_TO_TICKS(Timing::HOLD_MS))){
             LOG("Bład przesłania danych z kolejki xI2CsensorsQueue");
         }
         
         // Dane z one-Wire (DS18B20)
-        if(!xQueuePeek(xDS18B20Queue,&ds_sensors, pdMS_TO_TICKS(1000))){
+        if(!xQueuePeek(xDS18B20Queue,&ds_sensors, pdMS_TO_TICKS(Timing::HOLD_MS))){
             LOG("Bład przesłania danych z kolejki xDS18B20Queue");
         }
 

@@ -245,12 +245,6 @@ void EnterFlagaa() {
           dwaczas = millis();
         }
       }
-          
-    
-    
-   
-      
-      
     
 
     if (StoperCzasMin == 0 & StoperCzasGodz == 0 & StoperCzasSek == 0) {

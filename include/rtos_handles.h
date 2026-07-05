@@ -23,6 +23,7 @@ extern QueueHandle_t xSetpointQueue;
 extern QueueHandle_t xLogQueue;
 extern QueueHandle_t xControlDataQueue;
 extern QueueHandle_t xButtonQueue;
+extern QueueHandle_t xTimerQueue;
 
 
     struct I2C_sensors{

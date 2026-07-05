@@ -1,0 +1,11 @@
+1. Dodanie timera do suszarki 
+2. Dodanie zabezpieczeń, gdy temp na grzałce zostanie przekroczona setpoint = off / ekran pokazuje warnign i odliczanie do ponownego 
+włączenia to trzeba zrobić mutexem.
+3. Obsługa leda / przytrzymanie przycisku Enter zapala i gasi ekran i leda
+4. Zrobić logikę wentylatora w zależności od wilgotności 
+5. Task od ekranu 
+6. Dodanie Mqtt albo TCP/IP
+7. Dodawanie kody przez WiFi.
+
+Co zrobione aktualnie:
+

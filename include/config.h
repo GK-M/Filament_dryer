@@ -23,14 +23,17 @@ namespace I2C {
     constexpr uint8_t LCD = 0x27; 
 }
 
+//Rózne zmienne od czasów
 namespace Timing {
     constexpr uint32_t DEBOUNCE_MS    = 50;
     constexpr uint32_t HOLD_MS        = 500;
     constexpr uint32_t SENSOR_READ_MS = 1000;
     constexpr uint32_t SENSOR_I2C_READ_MS = 500;
     constexpr uint32_t PID_COMPUTING   = 1000;
+    constexpr uint32_t Display_data_timeout = 200;
 }
 
+//Kalibracja czujników
 namespace Calibration {
     constexpr float DS_1 = 0.0f;
     constexpr float DS_2 = 0.0f;
@@ -46,7 +49,7 @@ namespace adrr_DS{
     constexpr uint8_t addr3[8] = { 0x28, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x01 };
 };
 
-// TNastawy PID
+// Nastawy PID
 struct PID_data{
     double Setpoint = 0;  // zadana 
     double Input = 0;     // pomiar
@@ -56,8 +59,20 @@ struct PID_data{
     float Kp = 2.25, Ki = 0.05, Kd = 0.0;
     uint8_t rozdzielczosc = 10;
     float Kp_max = 20.0, Ki_max = 10.0, Kd_max = 5.0;
-
 };  
+
+//Zmienne do Timera
+struct Timer_data{
+
+    uint32_t SetCzas = 0;
+
+    uint32_t SetCzasMin = 0;   
+    uint32_t SetCzasGodz = 0;
+
+    uint32_t StoperCzasSek = 0;
+    uint32_t StoperCzasMin = 0;
+    uint32_t StoperCzasGodz = 0;
+};
 
 // LCD icons
 inline uint8_t Stopnie[] = {
