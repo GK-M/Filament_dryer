@@ -46,7 +46,7 @@ void vButtonTask(void *pvParameters) {
     uint32_t active_held_pin = 0;       
     uint32_t hold_start_time = 0;       
     uint32_t last_repeat_time = 0;      
-    const uint32_t REPEAT_DELAY_MS = 500;
+    
 
     current_var = EditVar::Setpoint;
     current_screen = Screen::Main;
@@ -55,7 +55,7 @@ void vButtonTask(void *pvParameters) {
 
     for(;;){
 
-    if(xQueueReceive(xButtonQueue, &buttonRAW, pdMS_TO_TICKS(550)) == pdTRUE){
+    if(xQueueReceive(xButtonQueue, &buttonRAW, pdMS_TO_TICKS(200)) == pdTRUE){
 
     if(buttonRAW.timestamp - lastPress[buttonRAW.pin] < Timing::DEBOUNCE_MS) {
         continue; 
@@ -244,7 +244,7 @@ void vButtonTask(void *pvParameters) {
             
         if (current_time - hold_start_time >= Timing::HOLD_MS) {
             
-            if (current_time - last_repeat_time >= REPEAT_DELAY_MS) {
+            if (current_time - last_repeat_time >= Timing::Repeat_button_time) {
                 last_repeat_time = current_time;
 
                 if (active_held_pin == Button::Increase) {
@@ -254,6 +254,7 @@ void vButtonTask(void *pvParameters) {
                                 case EditVar::Setpoint:
                                     pid_data.Setpoint += 5.0;
                                     if(pid_data.Setpoint > 100.0) pid_data.Setpoint = 100.0;
+                                    LOG("Setpoint is equal to: %f", pid_data.Setpoint);
                                     xQueueOverwrite(xSetpointQueue, &pid_data);
                                     break;
                                 case EditVar::Time:
@@ -261,6 +262,7 @@ void vButtonTask(void *pvParameters) {
                                     if(timer_data.SetCzas > 86400000UL) timer_data.SetCzas = 86400000UL;
                                     timer_data.SetCzasMin = (timer_data.SetCzas / 60000UL) % 60U;
                                     timer_data.SetCzasGodz = (timer_data.SetCzas / 3600000UL) % 24U;
+                                    LOG("SetCzas is equal to: %d:%d", timer_data.SetCzasGodz, timer_data.SetCzasMin);
                                     xQueueOverwrite(xTimerQueue, &timer_data);
                                     break;
                             }
@@ -308,6 +310,7 @@ void vButtonTask(void *pvParameters) {
                                 case EditVar::Setpoint:
                                     pid_data.Setpoint -= 5.0;
                                     if(pid_data.Setpoint < 0.0) pid_data.Setpoint = 0.0;
+                                    LOG("Setpoint is equal to: %f", pid_data.Setpoint);
                                     xQueueOverwrite(xSetpointQueue, &pid_data);
                                     break;
                                 case EditVar::Time:
@@ -315,6 +318,7 @@ void vButtonTask(void *pvParameters) {
                                     else timer_data.SetCzas = 0;
                                     timer_data.SetCzasMin = (timer_data.SetCzas / 60000UL) % 60U;
                                     timer_data.SetCzasGodz = (timer_data.SetCzas / 3600000UL) % 24U;
+                                    LOG("SetCzas is equal to: %d:%d", timer_data.SetCzasGodz, timer_data.SetCzasMin);
                                     xQueueOverwrite(xTimerQueue, &timer_data);
                                     break;
                             }
