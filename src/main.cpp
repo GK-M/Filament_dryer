@@ -1,82 +1,44 @@
-#include <Arduino.h>
-#include <WiFi.h>
-#include <ArduinoOTA.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
-#include "config.h"
-#include "secrets.h"
-#include "rtos_handles.h"
-#include "tasks/sensor_task.h"
-#include "tasks/control_task.h"
-#include "tasks/display_task.h"
-#include "tasks/button_task.h"
-#include "tasks/log_task.h"
-#include "tasks/led_task.h" 
-#include "tasks/fan_task.h"
-#include "secrets.h"
+#define PIN_ONEWIRE 3
 
+OneWire oneWire(PIN_ONEWIRE);
+DallasTemperature sensors(&oneWire);
 
-TaskHandle_t xTempSensorTaskHandle  = NULL;
-TaskHandle_t xControlTaskHandle = NULL;
-TaskHandle_t xDisplayTaskHandle = NULL;
-TaskHandle_t xButtonTaskHandle  = NULL;
-TaskHandle_t xLogTaskHandle     = NULL;
-TaskHandle_t xHumTempSensorTask = NULL;
-TaskHandle_t xLedTaskHandle     = NULL;
-TaskHandle_t xFanTaskHandle     = NULL;
-TaskHandle_t xOTAUpdateTaskHandle = NULL;
+DeviceAddress addr; 
 
-
-QueueHandle_t xI2CsensorsQueue  = NULL;
-QueueHandle_t xDS18B20Queue     = NULL;
-QueueHandle_t xSetpointQueue    = NULL;
-QueueHandle_t xLogQueue         = NULL;
-QueueHandle_t xControlDataQueue = NULL;
-QueueHandle_t xButtonQueue      = NULL;
-QueueHandle_t xTimerQueue = NULL;
-
-
-
-void vOtaTask(void* pvParameters) {
-    for(;;) {
-        ArduinoOTA.handle();
-        vTaskDelay(pdMS_TO_TICKS(100));
-    }
+void printAddress(DeviceAddress deviceAddress) {
+  for (uint8_t i = 0; i < 8; i++) {
+    if (deviceAddress[i] < 16) Serial.print("0");
+    Serial.print(deviceAddress[i], HEX);
+  }
+  Serial.println();
 }
 
-
 void setup() {
-    Serial.begin(115200);
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    while (WiFi.status() != WL_CONNECTED) delay(500);
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
+  Serial.begin(115200);
+  delay(1000);
+  pinMode(PIN_ONEWIRE, INPUT_PULLUP);
 
-    //Metoda od ArduinoOTA do obsługi OTA (Over-the-Air) aktualizacji
-    ArduinoOTA.setHostname("Filament Dryer");
-    ArduinoOTA.begin();
+  sensors.begin();
 
+  uint8_t count = sensors.getDeviceCount();
+  Serial.print("Znaleziono czujnikow: ");
+  Serial.println(count);
 
-
-    xDS18B20Queue     = xQueueCreate(1,   sizeof(DS_sensors));
-    xI2CsensorsQueue  = xQueueCreate(1,   sizeof(I2C_sensors));
-    xSetpointQueue    = xQueueCreate(1,   sizeof(PID_data));
-    xControlDataQueue = xQueueCreate(1,   sizeof(Control_status));
-    xLogQueue         = xQueueCreate(10,    LOG_MSG_LEN);
-    xButtonQueue      = xQueueCreate(10,   sizeof(ButtonRAW));
-    xTimerQueue       = xQueueCreate(1, sizeof(Timer_data));
-  
-    //xTaskCreate(vOtaTask, "OTA", 2048, NULL, 9, &xOTAUpdateTaskHandle);
-    xTaskCreate(vLogTask,     "Log",     2048, NULL, 11, &xLogTaskHandle);
-    //xTaskCreate(vTempSensorTask,  "Sensor",  2048, NULL, 6, &xTempSensorTaskHandle);
-    //xTaskCreate(vHumTempSensorTask, "BMP280", 4096, NULL, 5, &xHumTempSensorTask);
-    //xTaskCreate(vControlTask, "Control", 4096, NULL, 8, &xControlTaskHandle);
-    //xTaskCreate(vDisplayTask, "Display", 4096, NULL, 4, &xDisplayTaskHandle);
-    xTaskCreate(vButtonTask,  "Button",  4096, NULL, 10, &xButtonTaskHandle);
-    //xTaskCreate(vLedTask,     "Led",     1024, NULL, 2, &xLedTaskHandle);
-    //xTaskCreate(vFanTask,     "Fan",     1024, NULL, 3, &xFanTaskHandle);
-
+  for (uint8_t i = 0; i < count; i++) {
+    if (sensors.getAddress(addr, i)) {
+      Serial.print("Czujnik ");
+      Serial.print(i);
+      Serial.print(": ");
+      printAddress(addr);
+    } else {
+      Serial.print("BŁąd ");
+      Serial.println(i);
+    }
+  }
 }
 
 void loop() {
-    vTaskDelete(NULL);
 }
