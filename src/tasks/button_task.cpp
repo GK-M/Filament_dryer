@@ -141,6 +141,7 @@ void vButtonTask(void *pvParameters) {
                     case EditVar::Kp:
                         pid_data.Kp += 0.1;
                         if(pid_data.Kp > pid_data.Kp_max) pid_data.Kp = 0.0;
+                        if(pid_data.Kp < 0) pid_data.Kp = 0.0;
                         //zapis do pamięci flash
                         preferences.begin("Kp", false);
                         preferences.putFloat("Kp",pid_data.Kp);
@@ -151,6 +152,7 @@ void vButtonTask(void *pvParameters) {
                     case EditVar::Ki:
                         pid_data.Ki += 0.01;
                         if(pid_data.Ki > pid_data.Ki_max) pid_data.Ki = 0.0;
+                        if(pid_data.Ki < 0) pid_data.Ki = 0.0;
                        //zapis do pamięci flash 
                         preferences.begin("Ki", false);
                         preferences.putFloat("Ki",pid_data.Ki);
@@ -161,6 +163,7 @@ void vButtonTask(void *pvParameters) {
                     case EditVar::Kd:
                         pid_data.Kd += 0.01;
                         if(pid_data.Kd > pid_data.Kd_max) pid_data.Kd = 0.0;
+                        if(pid_data.Kd < 0) pid_data.Kd = 0.0;
                         //zapis do pamięci flash
                         preferences.begin("Kd", false); //fals -> odczyt i zapis, true -> tylko odczyt
                         preferences.putFloat("Kd",pid_data.Kd);
@@ -204,6 +207,7 @@ void vButtonTask(void *pvParameters) {
                 switch(current_var){
                     case EditVar::Kp:
                         pid_data.Kp -= 0.1;
+                        if(pid_data.Kp < 0) pid_data.Kp = 0.0;
                         LOG("Kp is equal to: %f", pid_data.Kp);
                         //zapis do pamięci flash
                         preferences.begin("Kp", false);
@@ -213,6 +217,7 @@ void vButtonTask(void *pvParameters) {
                         break;
                     case EditVar::Ki:
                         pid_data.Ki -= 0.01;
+                        if(pid_data.Ki < 0) pid_data.Ki = 0.0;
                         LOG("Ki is equal to: %f", pid_data.Ki);
                         //zapis do pamięci flash
                         preferences.begin("Ki", false);
@@ -222,6 +227,7 @@ void vButtonTask(void *pvParameters) {
                         break;
                     case EditVar::Kd:
                         pid_data.Kd -= 0.01;
+                        if(pid_data.Kd < 0) pid_data.Kd = 0.0;
                         LOG("Kd is equal to: %f", pid_data.Kd);
                         //zapis do pamięci flash
                         preferences.begin("Kd", false);
@@ -232,9 +238,9 @@ void vButtonTask(void *pvParameters) {
                 }
             break;
         }
-    
+
     }
- 
+
 
 
   }
@@ -330,6 +336,7 @@ void vButtonTask(void *pvParameters) {
                             switch(current_var){
                                 case EditVar::Kp:
                                     pid_data.Kp -= 0.1;
+                                    if(pid_data.Kp < 0) pid_data.Kp = 0.0;
                                     LOG("Kp is equal to: %f", pid_data.Kp);
                                     //zapis do pamięci flash
                                     preferences.begin("Kp", false);
@@ -339,6 +346,7 @@ void vButtonTask(void *pvParameters) {
                                     break;
                                 case EditVar::Ki:
                                     pid_data.Ki -= 0.01;
+                                    if(pid_data.Ki < 0) pid_data.Ki = 0.0;
                                     LOG("Ki is equal to: %f", pid_data.Ki);
                                     //zapis do pamięci flash
                                     preferences.begin("Ki", false);
@@ -348,6 +356,7 @@ void vButtonTask(void *pvParameters) {
                                     break;
                                 case EditVar::Kd:
                                     pid_data.Kd -= 0.01;
+                                    if(pid_data.Kd < 0) pid_data.Kd = 0.0;
                                     LOG("Kd is equal to: %f", pid_data.Kd);
                                     //zapis do pamięci flash
                                     preferences.begin("Kd", false);
