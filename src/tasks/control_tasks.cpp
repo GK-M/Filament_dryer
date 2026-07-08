@@ -45,12 +45,12 @@ void vControlTask(void *pvParameters) {
         
         // Dane z czujników I2C      
         if(!xQueuePeek(xI2CsensorsQueue,&i2c_sensors, pdMS_TO_TICKS(Timing::HOLD_MS))){
-            LOG("Bład przesłania danych z kolejki xI2CsensorsQueue");
+            LOG("Bład przesłania danych z kolejki xI2CsensorsQueue do ControlTask");
         }
         
         // Dane z one-Wire (DS18B20)
         if(!xQueuePeek(xDS18B20Queue,&ds_sensors, pdMS_TO_TICKS(Timing::HOLD_MS))){
-            LOG("Bład przesłania danych z kolejki xDS18B20Queue");
+            LOG("Bład przesłania danych z kolejki xDS18B20Queue do ControlTask");
         }
 
         /* Zmina w trakcie działania suszarki */
