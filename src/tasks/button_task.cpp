@@ -75,12 +75,14 @@ void vButtonTask(void *pvParameters) {
     if(buttonRAW.pin == Button::Enter){
        lastPress[buttonRAW.pin] = buttonRAW.timestamp;
        current_screen = static_cast<Screen>((static_cast<uint8_t>(current_screen) + 1) % static_cast<uint8_t>(Screen::COUNT));
+       LOG("Aktualna strona to: %d", (int)current_screen);
     }
 
     //Tryby pracy - kiedyś to zrobię 
     if(buttonRAW.pin == Button::Mode){
        lastPress[buttonRAW.pin] = buttonRAW.timestamp;
        mode = static_cast<Mode>((static_cast<uint8_t>(mode) + 1) % static_cast<uint8_t>(Mode::COUNT));
+       LOG("Aktualny Tryb pracy to: %d", (int)mode);
     }
 
     // Next - zmienna w zależności od aktualnego ekranu
@@ -93,6 +95,7 @@ void vButtonTask(void *pvParameters) {
             case Screen::Main:
                 if(current_var == EditVar::Setpoint) current_var = EditVar::Time;
                 else current_var = EditVar::Setpoint;
+                LOG("Edytujesz zminną : %d", (int)current_var);
                 break;
 
             case Screen::PID_cook:
@@ -100,7 +103,7 @@ void vButtonTask(void *pvParameters) {
                 if(current_var == EditVar::Kp) current_var = EditVar::Ki;
                 else if(current_var == EditVar::Ki) current_var = EditVar::Kd;
                 else current_var = EditVar::Kp;
-            
+                LOG("Edytujesz zminną : %d", (int)current_var);
                 break;
         
         }
