@@ -46,6 +46,7 @@ void vOtaTask(void* pvParameters) {
 
 void setup() {
     Serial.begin(115200);
+    /*
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     while (WiFi.status() != WL_CONNECTED) delay(500);
     Serial.print("IP address: ");
@@ -55,7 +56,7 @@ void setup() {
     ArduinoOTA.setHostname("Filament Dryer");
     ArduinoOTA.begin();
 
-
+    */
 
     xDS18B20Queue     = xQueueCreate(1,   sizeof(DS_sensors));
     xI2CsensorsQueue  = xQueueCreate(1,   sizeof(I2C_sensors));
@@ -67,10 +68,10 @@ void setup() {
   
     //xTaskCreate(vOtaTask, "OTA", 2048, NULL, 9, &xOTAUpdateTaskHandle);
     xTaskCreate(vLogTask,     "Log",     2048, NULL, 11, &xLogTaskHandle);
-    //xTaskCreate(vTempSensorTask,  "Sensor",  2048, NULL, 6, &xTempSensorTaskHandle);
-    //xTaskCreate(vHumTempSensorTask, "BMP280", 4096, NULL, 5, &xHumTempSensorTask);
-    //xTaskCreate(vControlTask, "Control", 4096, NULL, 8, &xControlTaskHandle);
-    //xTaskCreate(vDisplayTask, "Display", 4096, NULL, 4, &xDisplayTaskHandle);
+    xTaskCreate(vTempSensorTask,  "Sensor",  2048, NULL, 6, &xTempSensorTaskHandle);
+    xTaskCreate(vHumTempSensorTask, "BMP280", 4096, NULL, 5, &xHumTempSensorTask);
+    xTaskCreate(vControlTask, "Control", 4096, NULL, 8, &xControlTaskHandle);
+    xTaskCreate(vDisplayTask, "Display", 4096, NULL, 4, &xDisplayTaskHandle);
     xTaskCreate(vButtonTask,  "Button",  4096, NULL, 10, &xButtonTaskHandle);
     //xTaskCreate(vLedTask,     "Led",     1024, NULL, 2, &xLedTaskHandle);
     //xTaskCreate(vFanTask,     "Fan",     1024, NULL, 3, &xFanTaskHandle);
