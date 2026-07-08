@@ -84,7 +84,7 @@ void vHumTempSensorTask(void *pvParameters){
     
     I2C_sensors.temp_aht = temp.temperature + Calibration::AHT10;
     I2C_sensors.hum_aht = hum.relative_humidity;
-    LOG("Data from AHT10: %.1f % %.1f C ",I2C_sensors.temp_aht, I2C_sensors.hum_aht);
+    LOG("Data from AHT10: %.1f%% %.1f C ",I2C_sensors.temp_aht, I2C_sensors.hum_aht);
     I2C_sensors.t_bmp = bmp.readTemperature() + Calibration::BMP280;
     I2C_sensors.p_hPa = bmp.readPressure() / 100.0f;
     LOG("Data from BMP280: %.1f C %.1f hPa ",I2C_sensors.t_bmp, I2C_sensors.p_hPa);
