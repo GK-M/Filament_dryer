@@ -30,16 +30,16 @@ lcd.backlight();  // Ekran ON
     for (;;) {
 
         if(!xQueuePeek(xI2CsensorsQueue,&i2c_sensors, pdMS_TO_TICKS(Timing::Display_data_timeout))){
-            LOG("Bład przesłania danych z kolejki xI2CsensorsQueue");
+            LOG("Bład przesłania danych z kolejki xI2CsensorsQueue do DisplayTask");
         }
         if(!xQueuePeek(xDS18B20Queue,&ds_sensors, pdMS_TO_TICKS(Timing::Display_data_timeout))){
-            LOG("Bład przesłania danych z kolejki xDS18B20Queue");
+            LOG("Bład przesłania danych z kolejki xDS18B20Queue do DisplayTask");
         }
         if(!xQueuePeek(xControlDataQueue,&control_status, pdMS_TO_TICKS(Timing::Display_data_timeout))){
-            LOG("Bład przesłania danych z kolejki xControlDataQueue");
+            LOG("Bład przesłania danych z kolejki xControlDataQueue do DisplayTask");
         }
         if(!xQueuePeek(xControlDataQueue,&control_status, pdMS_TO_TICKS(Timing::Display_data_timeout))){
-            LOG("Bład przesłania danych z kolejki xControlDataQueue");
+            LOG("Bład przesłania danych z kolejki xControlDataQueue do DisplayTask");
         }
         if(!xQueuePeek(xTimerQueue,&timer_data, pdMS_TO_TICKS(Timing::Display_data_timeout))){
             LOG("Bład przesłania danych z kolejki xTimerQueue");
