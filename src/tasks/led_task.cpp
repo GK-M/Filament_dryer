@@ -7,10 +7,18 @@
 
 void vLedTask(void *pvParameters) {
 
+    Led_control led_control;
+
     pinMode(Pin::LedPin, OUTPUT);
+    
+    
+    ledcAttachPin(Pin::LedPin, 1);
+    ledcChangeFrequency(1,Led_data::freq, Led_data::rozdzielczosc);
+    ledcWrite(1,100);
 
     for (;;) {
     
+    vTaskDelay(pdMS_TO_TICKS(1000));
         
     }
 }

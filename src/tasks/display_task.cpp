@@ -13,6 +13,7 @@ I2C_sensors i2c_sensors;
 DS_sensors ds_sensors;
 Control_status control_status;
 Timer_data timer_data;
+Display_data display_data;
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
@@ -38,16 +39,26 @@ lcd.backlight();  // Ekran ON
         if(!xQueuePeek(xControlDataQueue,&control_status, pdMS_TO_TICKS(Timing::Display_data_timeout))){
             LOG("Bład przesłania danych z kolejki xControlDataQueue do DisplayTask");
         }
-        if(!xQueuePeek(xControlDataQueue,&control_status, pdMS_TO_TICKS(Timing::Display_data_timeout))){
+        if(!xQueuePeek(xButtonQueue,&b, pdMS_TO_TICKS(Timing::Display_data_timeout))){
             LOG("Bład przesłania danych z kolejki xControlDataQueue do DisplayTask");
         }
         if(!xQueuePeek(xTimerQueue,&timer_data, pdMS_TO_TICKS(Timing::Display_data_timeout))){
-            LOG("Bład przesłania danych z kolejki xTimerQueue");
+            LOG("Bład przesłania danych z kolejki xTimerQueue  do DisplayTask");
         }
+        if(!xQueuePeek(xDisplayQueue,&display_data, pdMS_TO_TICKS(Timing::Display_data_timeout))){
+            LOG("Bład przesłania danych z kolejki xDisplayQueu do DisplayTask");
+        }
+        
+        switch (display_data.screen){
+            
+        
+
+        case Screen::Main:
+
+        lcd.setCursor(0,0);
     
     
-    
-    
+        }
     
     
     

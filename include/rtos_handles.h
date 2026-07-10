@@ -13,6 +13,7 @@ extern QueueHandle_t xLogQueue;
 extern QueueHandle_t xControlDataQueue;
 extern QueueHandle_t xButtonQueue;
 extern QueueHandle_t xTimerQueue;
+extern QueueHandle_t xDisplayQueue;
 
 // Uchwyty tasków
 extern TaskHandle_t xTempSensorTaskHandle;
@@ -90,4 +91,10 @@ extern TaskHandle_t xFanTaskHandle;
         Mode_3,
         Mode_4,
         COUNT,
+    };
+
+    struct Display_data{
+        Mode mode;
+        Screen screen;
+        EditVar editvar;
     };

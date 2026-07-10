@@ -75,13 +75,11 @@ void vControlTask(void *pvParameters) {
             LOG("Zabezpieczenie przed zbyt dużą temperaturą aktywowane pid_data.error = %d",pid_data.error);
         }else if (ds_sensors.DS_1 < Calibration::Temp_after_error &&
                   ds_sensors.DS_2 < Calibration::Temp_after_error &&
-                  ds_sensors.DS_3 < Calibration::Temp_after_error )
+                  ds_sensors.DS_3 < Calibration::Temp_after_error && pid_data.error == true)
         {
             pid_data.error = false;
             LOG("Mata wystygła do zadanej temperatury %.1f pid_data.error = %d",Calibration::Temp_after_error,pid_data.error);
         }
-        
-
         
         control_status.Output = pid_data.Output;
         LOG("Output is equail: %.1f",pid_data.Output);

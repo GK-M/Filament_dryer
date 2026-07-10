@@ -43,6 +43,10 @@ void vButtonTask(void *pvParameters) {
     Mode mode;
     Timer_data timer_data;
 
+    Display_data display_data;
+    
+    
+
     uint32_t active_held_pin = 0;       
     uint32_t hold_start_time = 0;       
     uint32_t last_repeat_time = 0;      
@@ -76,13 +80,21 @@ void vButtonTask(void *pvParameters) {
        lastPress[buttonRAW.pin] = buttonRAW.timestamp;
        current_screen = static_cast<Screen>((static_cast<uint8_t>(current_screen) + 1) % static_cast<uint8_t>(Screen::COUNT));
        LOG("Aktualna strona to: %d", (int)current_screen);
+       display_data.screen  = current_screen;
+       display_data.editvar = current_var;
+       display_data.mode    = mode;
+       xQueueOverwrite(xDisplayQueue, &display_data);
     }
 
-    //Tryby pracy - kiedyś to zrobię 
+    //Tryby pracy - kiedyś to zrobię
     if(buttonRAW.pin == Button::Mode){
        lastPress[buttonRAW.pin] = buttonRAW.timestamp;
        mode = static_cast<Mode>((static_cast<uint8_t>(mode) + 1) % static_cast<uint8_t>(Mode::COUNT));
        LOG("Aktualny Tryb pracy to: %d", (int)mode);
+       display_data.screen  = current_screen;
+       display_data.editvar = current_var;
+       display_data.mode    = mode;
+       xQueueOverwrite(xDisplayQueue, &display_data);
     }
 
     // Next - zmienna w zależności od aktualnego ekranu
@@ -96,6 +108,10 @@ void vButtonTask(void *pvParameters) {
                 if(current_var == EditVar::Setpoint) current_var = EditVar::Time;
                 else current_var = EditVar::Setpoint;
                 LOG("Edytujesz zminną : %d", (int)current_var);
+                display_data.screen  = current_screen;
+                display_data.editvar = current_var;
+                display_data.mode    = mode;
+                xQueueOverwrite(xDisplayQueue, &display_data);
                 break;
 
             case Screen::PID_cook:
@@ -104,6 +120,10 @@ void vButtonTask(void *pvParameters) {
                 else if(current_var == EditVar::Ki) current_var = EditVar::Kd;
                 else current_var = EditVar::Kp;
                 LOG("Edytujesz zminną : %d", (int)current_var);
+                display_data.screen  = current_screen;
+                display_data.editvar = current_var;
+                display_data.mode    = mode;
+                xQueueOverwrite(xDisplayQueue, &display_data);
                 break;
         
         }
@@ -281,37 +301,25 @@ void vButtonTask(void *pvParameters) {
                                 case EditVar::Kp:
                                     pid_data.Kp += 0.1;
                                     if(pid_data.Kp > pid_data.Kp_max) pid_data.Kp = 0.0;
-                                    //zapis do pamięci flash
-                                    preferences.begin("Kp", false);
-                                    preferences.putFloat("Kp",pid_data.Kp);
-                                    preferences.end();
                                     LOG("Kp is equal to: %f", pid_data.Kp);
                                     xQueueOverwrite(xSetpointQueue, &pid_data);
                                     break;
                                 case EditVar::Ki:
                                     pid_data.Ki += 0.01;
                                     if(pid_data.Ki > pid_data.Ki_max) pid_data.Ki = 0.0;
-                                //zapis do pamięci flash 
-                                    preferences.begin("Ki", false);
-                                    preferences.putFloat("Ki",pid_data.Ki);
-                                    preferences.end();
                                     LOG("Ki is equal to: %f", pid_data.Ki);
                                     xQueueOverwrite(xSetpointQueue, &pid_data);
                                     break;
                                 case EditVar::Kd:
                                     pid_data.Kd += 0.01;
                                     if(pid_data.Kd > pid_data.Kd_max) pid_data.Kd = 0.0;
-                                    //zapis do pamięci flash
-                                    preferences.begin("Kd", false); //fals -> odczyt i zapis, true -> tylko odczyt
-                                    preferences.putFloat("Kd",pid_data.Kd);
-                                    preferences.end();
                                     LOG("Kd is equal to: %f", pid_data.Kd);
                                     xQueueOverwrite(xSetpointQueue, &pid_data);
                                     break;
                             }
                         break;
                     }
-                } 
+                }
                 else if (active_held_pin == Button::Decrease) {
                     switch(current_screen){
                         case Screen::Main:
@@ -338,30 +346,20 @@ void vButtonTask(void *pvParameters) {
                                     pid_data.Kp -= 0.1;
                                     if(pid_data.Kp < 0) pid_data.Kp = 0.0;
                                     LOG("Kp is equal to: %f", pid_data.Kp);
-                                    //zapis do pamięci flash
-                                    preferences.begin("Kp", false);
-                                    preferences.putFloat("Kp",pid_data.Kp);
-                                    preferences.end();
                                     xQueueOverwrite(xSetpointQueue, &pid_data);
                                     break;
                                 case EditVar::Ki:
                                     pid_data.Ki -= 0.01;
                                     if(pid_data.Ki < 0) pid_data.Ki = 0.0;
                                     LOG("Ki is equal to: %f", pid_data.Ki);
-                                    //zapis do pamięci flash
-                                    preferences.begin("Ki", false);
-                                    preferences.putFloat("Ki",pid_data.Ki);
-                                    preferences.end();
                                     xQueueOverwrite(xSetpointQueue, &pid_data);
                                     break;
                                 case EditVar::Kd:
                                     pid_data.Kd -= 0.01;
                                     if(pid_data.Kd < 0) pid_data.Kd = 0.0;
                                     LOG("Kd is equal to: %f", pid_data.Kd);
-                                    //zapis do pamięci flash
-                                    preferences.begin("Kd", false);
-                                    preferences.putFloat("Kd",pid_data.Kd);
-                                    preferences.end();
+                                    xQueueOverwrite(xSetpointQueue, &pid_data);
+                                    break;
                                     xQueueOverwrite(xSetpointQueue, &pid_data);
                                     break;
                             }

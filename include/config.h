@@ -60,9 +60,9 @@ struct PID_data{
     double Output = 0.0;  // wyjście PID
     float Kp = 2.25, Ki = 0.05, Kd = 0.0;
     float Kp_max = 20.0, Ki_max = 10.0, Kd_max = 5.0;
-    int16_t SetSampleTime = 1000;
-    int16_t freq = 1000;
-    uint8_t rozdzielczosc = 10;
+    const uint16_t SetSampleTime = 1000;
+    const uint16_t freq = 18000;
+    const uint8_t rozdzielczosc = 10;
     bool error = false;
 };  
 
@@ -78,6 +78,18 @@ struct Timer_data{
     uint32_t StoperCzasMin = 0;
     uint32_t StoperCzasGodz = 0;
 };
+
+namespace Led_data
+{   
+    constexpr uint16_t freq = 18000;
+    constexpr uint8_t rozdzielczosc = 10;
+};
+
+struct Led_control
+{
+    uint16_t duty = 0;
+};
+
 
 // LCD icons
 inline uint8_t Stopnie[] = {

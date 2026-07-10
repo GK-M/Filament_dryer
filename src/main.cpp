@@ -33,7 +33,7 @@ QueueHandle_t xLogQueue         = NULL;
 QueueHandle_t xControlDataQueue = NULL;
 QueueHandle_t xButtonQueue      = NULL;
 QueueHandle_t xTimerQueue = NULL;
-
+QueueHandle_t xDisplayQueue = NULL;
 
 
 void vOtaTask(void* pvParameters) {
@@ -65,6 +65,7 @@ void setup() {
     xLogQueue         = xQueueCreate(10,    LOG_MSG_LEN);
     xButtonQueue      = xQueueCreate(10,   sizeof(ButtonRAW));
     xTimerQueue       = xQueueCreate(1, sizeof(Timer_data));
+    xDisplayQueue = xQueueCreate(5, sizeof(Display_data));
   
     //xTaskCreate(vOtaTask, "OTA", 2048, NULL, 9, &xOTAUpdateTaskHandle);
     xTaskCreate(vLogTask,     "Log",     2048, NULL, 11, &xLogTaskHandle);
@@ -73,7 +74,7 @@ void setup() {
     xTaskCreate(vControlTask, "Control", 4096, NULL, 8, &xControlTaskHandle);
     //xTaskCreate(vDisplayTask, "Display", 4096, NULL, 4, &xDisplayTaskHandle);
     xTaskCreate(vButtonTask,  "Button",  4096, NULL, 10, &xButtonTaskHandle);
-    //xTaskCreate(vLedTask,     "Led",     1024, NULL, 2, &xLedTaskHandle);
+    xTaskCreate(vLedTask,     "Led",     1024, NULL, 2, &xLedTaskHandle);
     //xTaskCreate(vFanTask,     "Fan",     1024, NULL, 3, &xFanTaskHandle);
 
 }
