@@ -56,14 +56,35 @@ void vControlTask(void *pvParameters) {
         /* Zmina w trakcie działania suszarki */
         pid.SetTunings(pid_data.Kp, pid_data.Ki, pid_data.Kd);
         pid_data.Input = i2c_sensors.temp_aht;
+
         pid.Compute();
         ledcWrite(0, pid_data.Output); // kanał 0 jest przypisany do pinu COOK_PWM
+        pid_data.Output = map(pid_data.Output, 0, 1023, 0, 100);
+
 
         if(pid_data.Output > 0) control_status.active = true;
         else control_status.active = false;
 
-        pid_data.Output = map(pid_data.Output, 0, 1023, 0, 100);
+        //Zabezpiecznie przed zbyt wysoką temp. na matach
+        if(ds_sensors.DS_1 > Calibration::Max_DS_temperature ||
+            ds_sensors.DS_2 > Calibration::Max_DS_temperature ||
+            ds_sensors.DS_3 > Calibration::Max_DS_temperature) {
+            pid_data.Setpoint = 0.0;
+            ledcWrite(0,0);
+            pid_data.error = true;
+            LOG("Zabezpieczenie przed zbyt dużą temperaturą aktywowane pid_data.error = %d",pid_data.error);
+        }else if (ds_sensors.DS_1 < Calibration::Temp_after_error &&
+                  ds_sensors.DS_2 < Calibration::Temp_after_error &&
+                  ds_sensors.DS_3 < Calibration::Temp_after_error )
+        {
+            pid_data.error = false;
+            LOG("Mata wystygła do zadanej temperatury %.1f pid_data.error = %d",Calibration::Temp_after_error,pid_data.error);
+        }
+        
+
+        
         control_status.Output = pid_data.Output;
+        LOG("Output is equail: %.1f",pid_data.Output);
         control_status.Setpoint = pid_data.Setpoint;
 
         //Wysyłane dane z PID

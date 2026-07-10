@@ -41,6 +41,8 @@ namespace Calibration {
     constexpr float DS_3 = 0.0f;
     constexpr float AHT10 = 0.0f;
     constexpr float BMP280 = 0.0f;
+    constexpr float Max_DS_temperature = 105.0f;
+    constexpr float Temp_after_error = 70.0f;
 }
 
 //DS18B20 adresses
@@ -53,14 +55,15 @@ namespace adrr_DS{
 
 // Nastawy PID
 struct PID_data{
-    double Setpoint = 0;  // zadana 
-    double Input = 0;     // pomiar
+    double Setpoint = 0.0;  // zadana 
+    double Input = 0.0;     // pomiar
     double Output = 0.0;  // wyjście PID
+    float Kp = 2.25, Ki = 0.05, Kd = 0.0;
+    float Kp_max = 20.0, Ki_max = 10.0, Kd_max = 5.0;
     int16_t SetSampleTime = 1000;
     int16_t freq = 1000;
-    float Kp = 2.25, Ki = 0.05, Kd = 0.0;
     uint8_t rozdzielczosc = 10;
-    float Kp_max = 20.0, Ki_max = 10.0, Kd_max = 5.0;
+    bool error = false;
 };  
 
 //Zmienne do Timera
