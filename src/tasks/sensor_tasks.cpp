@@ -79,18 +79,19 @@ void vHumTempSensorTask(void *pvParameters){
                 Adafruit_BMP280::FILTER_OFF);  
     for(;;){
 
+    xSemaphoreTake(xI2CMutex, portMAX_DELAY);
     bmp.takeForcedMeasurement();
     aht.getEvent(&hum, &temp);
-    
     I2C_sensors.temp_aht = temp.temperature + Calibration::AHT10;
     I2C_sensors.hum_aht = hum.relative_humidity;
-    LOG("Data from AHT10: %.1f%% %.1f C ",I2C_sensors.temp_aht, I2C_sensors.hum_aht);
     I2C_sensors.t_bmp = bmp.readTemperature() + Calibration::BMP280;
     I2C_sensors.p_hPa = bmp.readPressure() / 100.0f;
+    xSemaphoreGive(xI2CMutex);
+
+    LOG("Data from AHT10: %.1f%% %.1f C ",I2C_sensors.temp_aht, I2C_sensors.hum_aht);
     LOG("Data from BMP280: %.1f C %.1f hPa ",I2C_sensors.t_bmp, I2C_sensors.p_hPa);
-    
     xQueueOverwrite(xI2CsensorsQueue, &I2C_sensors);
-    
+
     vTaskDelay(pdMS_TO_TICKS(Timing::SENSOR_I2C_READ_MS));
     }
 }

@@ -5,6 +5,9 @@
 #include <freertos/queue.h>
 #include <freertos/semphr.h>
 
+// Mutex I2C
+extern SemaphoreHandle_t xI2CMutex;
+
 // Kolejki do komunikacji między taskami
 extern QueueHandle_t xDS18B20Queue;
 extern QueueHandle_t xI2CsensorsQueue;

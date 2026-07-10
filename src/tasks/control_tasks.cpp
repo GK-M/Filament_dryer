@@ -59,6 +59,7 @@ void vControlTask(void *pvParameters) {
 
         pid.Compute();
         ledcWrite(0, pid_data.Output); // kanał 0 jest przypisany do pinu COOK_PWM
+        LOG("Output is equail: %.1f",control_status.Output);
         pid_data.Output = map(pid_data.Output, 0, 1023, 0, 100);
 
 
@@ -82,7 +83,7 @@ void vControlTask(void *pvParameters) {
         }
         
         control_status.Output = pid_data.Output;
-        LOG("Output is equail: %.1f",pid_data.Output);
+        //LOG("Output is equail: %.1f",control_status.Output);
         control_status.Setpoint = pid_data.Setpoint;
 
         //Wysyłane dane z PID

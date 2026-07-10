@@ -149,7 +149,8 @@ void vButtonTask(void *pvParameters) {
                         timer_data.SetCzas = timer_data.SetCzas + 900000UL;
                         timer_data.SetCzas = constrain(timer_data.SetCzas, 0UL, 86400000UL); // ograniczenie do 24 godzin
                         timer_data.SetCzasMin = (timer_data.SetCzas / 60000UL) % 60U;
-                        timer_data.SetCzasGodz = (timer_data.SetCzas / 3600000UL) % 24U; 
+                        timer_data.SetCzasGodz = (timer_data.SetCzas / 3600000UL) % 12; 
+
                         LOG("SetCzas is equal to: %d:%d", timer_data.SetCzasGodz, timer_data.SetCzasMin);
                         xQueueOverwrite(xTimerQueue, &timer_data);         
                         break;

@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <ArduinoOTA.h>
+#include <Wire.h>
+
 
 #include "config.h"
 #include "secrets.h"
@@ -26,6 +28,8 @@ TaskHandle_t xFanTaskHandle     = NULL;
 TaskHandle_t xOTAUpdateTaskHandle = NULL;
 
 
+SemaphoreHandle_t xI2CMutex = NULL;
+
 QueueHandle_t xI2CsensorsQueue  = NULL;
 QueueHandle_t xDS18B20Queue     = NULL;
 QueueHandle_t xSetpointQueue    = NULL;
@@ -46,6 +50,7 @@ void vOtaTask(void* pvParameters) {
 
 void setup() {
     Serial.begin(115200);
+    Wire.begin(I2C::SDA, I2C::SCL, I2C::frequency);
     /*
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     while (WiFi.status() != WL_CONNECTED) delay(500);
@@ -58,6 +63,8 @@ void setup() {
 
     */
 
+    xI2CMutex         = xSemaphoreCreateMutex();
+
     xDS18B20Queue     = xQueueCreate(1,   sizeof(DS_sensors));
     xI2CsensorsQueue  = xQueueCreate(1,   sizeof(I2C_sensors));
     xSetpointQueue    = xQueueCreate(1,   sizeof(PID_data));
@@ -65,15 +72,15 @@ void setup() {
     xLogQueue         = xQueueCreate(10,    LOG_MSG_LEN);
     xButtonQueue      = xQueueCreate(10,   sizeof(ButtonRAW));
     xTimerQueue       = xQueueCreate(1, sizeof(Timer_data));
-    xDisplayQueue = xQueueCreate(5, sizeof(Display_data));
+    xDisplayQueue = xQueueCreate(1, sizeof(Display_data));
   
     //xTaskCreate(vOtaTask, "OTA", 2048, NULL, 9, &xOTAUpdateTaskHandle);
     xTaskCreate(vLogTask,     "Log",     2048, NULL, 11, &xLogTaskHandle);
     xTaskCreate(vTempSensorTask,  "Sensor",  2048, NULL, 6, &xTempSensorTaskHandle);
     xTaskCreate(vHumTempSensorTask, "BMP280", 4096, NULL, 5, &xHumTempSensorTask);
     xTaskCreate(vControlTask, "Control", 4096, NULL, 8, &xControlTaskHandle);
-    //xTaskCreate(vDisplayTask, "Display", 4096, NULL, 4, &xDisplayTaskHandle);
-    xTaskCreate(vButtonTask,  "Button",  4096, NULL, 10, &xButtonTaskHandle);
+    xTaskCreate(vDisplayTask, "Display", 8192, NULL, 15, &xDisplayTaskHandle);
+    xTaskCreate(vButtonTask,  "Button",  8192, NULL, 10, &xButtonTaskHandle);
     xTaskCreate(vLedTask,     "Led",     1024, NULL, 2, &xLedTaskHandle);
     //xTaskCreate(vFanTask,     "Fan",     1024, NULL, 3, &xFanTaskHandle);
 
