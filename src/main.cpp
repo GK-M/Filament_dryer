@@ -51,7 +51,12 @@ void vOtaTask(void* pvParameters) {
 void setup() {
     Serial.begin(115200);
     Wire.begin(I2C::SDA, I2C::SCL, I2C::frequency);
-    /*
+    
+
+    IPAddress local_IP(192, 168, 1, 15);
+    IPAddress gateway(192, 168, 1, 1);
+    IPAddress subnet(255, 255, 255, 0);
+    WiFi.config(local_IP, gateway, subnet);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     while (WiFi.status() != WL_CONNECTED) delay(500);
     Serial.print("IP address: ");
@@ -61,7 +66,7 @@ void setup() {
     ArduinoOTA.setHostname("Filament Dryer");
     ArduinoOTA.begin();
 
-    */
+    
 
     xI2CMutex         = xSemaphoreCreateMutex();
 
@@ -72,9 +77,9 @@ void setup() {
     xLogQueue         = xQueueCreate(10,    LOG_MSG_LEN);
     xButtonQueue      = xQueueCreate(10,   sizeof(ButtonRAW));
     xTimerQueue       = xQueueCreate(1, sizeof(Timer_data));
-    xDisplayQueue = xQueueCreate(1, sizeof(Display_data));
+    xDisplayQueue     = xQueueCreate(1, sizeof(Display_data));
   
-    //xTaskCreate(vOtaTask, "OTA", 2048, NULL, 9, &xOTAUpdateTaskHandle);
+    xTaskCreate(vOtaTask, "OTA", 2048, NULL, 20, &xOTAUpdateTaskHandle);
     xTaskCreate(vLogTask,     "Log",     2048, NULL, 11, &xLogTaskHandle);
     xTaskCreate(vTempSensorTask,  "Sensor",  2048, NULL, 6, &xTempSensorTaskHandle);
     xTaskCreate(vHumTempSensorTask, "BMP280", 4096, NULL, 5, &xHumTempSensorTask);
@@ -82,7 +87,7 @@ void setup() {
     xTaskCreate(vDisplayTask, "Display", 8192, NULL, 15, &xDisplayTaskHandle);
     xTaskCreate(vButtonTask,  "Button",  8192, NULL, 10, &xButtonTaskHandle);
     xTaskCreate(vLedTask,     "Led",     1024, NULL, 2, &xLedTaskHandle);
-    //xTaskCreate(vFanTask,     "Fan",     1024, NULL, 3, &xFanTaskHandle);
+    xTaskCreate(vFanTask,     "Fan",     1024, NULL, 3, &xFanTaskHandle);
 
 }
 

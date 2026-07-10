@@ -14,11 +14,11 @@ void vLedTask(void *pvParameters) {
     
     ledcAttachPin(Pin::LedPin, 1);
     ledcChangeFrequency(1,Led_data::freq, Led_data::rozdzielczosc);
-    ledcWrite(1,100);
+    ledcWrite(1,1023);
 
     for (;;) {
     
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    vTaskDelay(pdMS_TO_TICKS(50));
         
     }
 }

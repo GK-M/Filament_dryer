@@ -5,10 +5,12 @@
 #include "rtos_handles.h"
 #include "config.h"
 #include "tasks/log_task.h"
+#include <Preferences.h>
 
 
 void vDisplayTask(void *pvParameters) {
-
+    
+    Preferences preferences;
     I2C_sensors i2c_sensors;
     DS_sensors ds_sensors;
     Control_status control_status;
@@ -23,6 +25,19 @@ void vDisplayTask(void *pvParameters) {
 
     lcd.createChar(0, Stopnie);
     lcd.createChar(1, Dzwonek);
+
+    preferences.begin("Kp", true);
+    pid_data.Kp = preferences.getFloat("Kp", pid_data.Kp);
+    preferences.end();
+
+    preferences.begin("Ki", true);
+    pid_data.Ki = preferences.getFloat("Ki", pid_data.Ki);
+    preferences.end();
+
+    preferences.begin("Kd", true);
+    pid_data.Kd = preferences.getFloat("Kd", pid_data.Kd);
+    preferences.end();
+
 
     for (;;) {
 
@@ -103,13 +118,13 @@ void vDisplayTask(void *pvParameters) {
 
             // Row 2: Kd
             lcd.setCursor(0, 2);
-            lcd.printf("%cKd:%-5.3f           ", kd_sel, pid_data.Kd);
+            lcd.printf("%cKd:%-5.3f  T:%3.1 C", kd_sel, pid_data.Kd,i2c_sensors.temp_aht);
 
             // Row 3: Setpoint i Output
             lcd.setCursor(0, 3);
             lcd.printf(" Set:%.1f", control_status.Setpoint);
             lcd.write(byte(0));
-            lcd.printf("  Out:%.0f%%  ", control_status.Output);
+            lcd.printf("  Out:%.0f%%     ", control_status.Output);
             break;
         }
 
@@ -130,6 +145,6 @@ void vDisplayTask(void *pvParameters) {
         }
         xSemaphoreGive(xI2CMutex);
 
-        vTaskDelay(pdMS_TO_TICKS(100));
+        vTaskDelay(pdMS_TO_TICKS(25));
     }
 }

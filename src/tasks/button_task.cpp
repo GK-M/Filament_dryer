@@ -56,6 +56,19 @@ void vButtonTask(void *pvParameters) {
     current_screen = Screen::Main;
     mode = Mode::Mode_1;
 
+    preferences.begin("Kp", true);
+    pid_data.Kp = preferences.getFloat("Kp", pid_data.Kp);
+    preferences.end();
+
+    preferences.begin("Ki", true);
+    pid_data.Ki = preferences.getFloat("Ki", pid_data.Ki);
+    preferences.end();
+
+    preferences.begin("Kd", true);
+    pid_data.Kd = preferences.getFloat("Kd", pid_data.Kd);
+    preferences.end();
+
+
 
     for(;;){
 
