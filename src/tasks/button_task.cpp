@@ -143,6 +143,8 @@ void vButtonTask(void *pvParameters) {
                 break;
 
             case Screen::DONE:
+                xQueuePeek(xSetpointQueue, &pid_data,   0);
+                xQueuePeek(xTimerQueue,    &timer_data, 0);
                 current_screen = Screen::Main;
                 display_data.screen  = current_screen;
                 display_data.editvar = current_var;
@@ -165,7 +167,6 @@ void vButtonTask(void *pvParameters) {
             case Screen::Main:
                 switch(current_var){
                     case EditVar::Setpoint:
-                        xQueuePeek(xSetpointQueue, &pid_data, 0);
                         pid_data.Setpoint += 5.0;
                         if(pid_data.Setpoint > 100.0) pid_data.Setpoint = 100.0;
                         LOG("Setpoint is equal to: %f", pid_data.Setpoint);
@@ -173,8 +174,6 @@ void vButtonTask(void *pvParameters) {
                         break;
 
                     case EditVar::Time:
-
-                        xQueuePeek(xTimerQueue, &timer_data, 0);
                         timer_data.SetCzas = timer_data.SetCzas + Calibration::Button_Add_Time;
                         timer_data.SetCzas = constrain(timer_data.SetCzas, 0UL, 86400000UL); // ograniczenie do 24 godzin
                         timer_data.SetCzasMin = (timer_data.SetCzas / 60000UL) % 60U;
@@ -239,7 +238,6 @@ void vButtonTask(void *pvParameters) {
             case Screen::Main:
                 switch(current_var){
                     case EditVar::Setpoint:
-                        xQueuePeek(xSetpointQueue, &pid_data, 0);
                         pid_data.Setpoint -= 5.0;
                         if(pid_data.Setpoint < 0.0) pid_data.Setpoint = 0.0;
                         LOG("Setpoint is equal to: %f", pid_data.Setpoint);
@@ -322,7 +320,6 @@ void vButtonTask(void *pvParameters) {
                         case Screen::Main:
                             switch(current_var){
                                 case EditVar::Setpoint:
-                                    xQueuePeek(xSetpointQueue, &pid_data, 0);
                                     pid_data.Setpoint += 5.0;
                                     if(pid_data.Setpoint > 100.0) pid_data.Setpoint = 100.0;
                                     LOG("Setpoint is equal to: %f", pid_data.Setpoint);
@@ -369,7 +366,6 @@ void vButtonTask(void *pvParameters) {
                         case Screen::Main:
                             switch(current_var){
                                 case EditVar::Setpoint:
-                                    xQueuePeek(xSetpointQueue, &pid_data, 0);
                                     pid_data.Setpoint -= 5.0;
                                     if(pid_data.Setpoint < 0.0) pid_data.Setpoint = 0.0;
                                     LOG("Setpoint is equal to: %f", pid_data.Setpoint);

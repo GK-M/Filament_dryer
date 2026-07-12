@@ -85,7 +85,7 @@ void setup() {
     xTaskCreate(vHumTempSensorTask, "BMP280", 4096, NULL, 5, &xHumTempSensorTask);
     xTaskCreate(vControlTask, "Control", 4096, NULL, 8, &xControlTaskHandle);
     xTaskCreate(vDisplayTask, "Display", 8192, NULL, 15, &xDisplayTaskHandle);
-    xTaskCreate(vButtonTask,  "Button",  8192, NULL, 14, &xButtonTaskHandle);
+    xTaskCreate(vButtonTask,  "Button",  16384, NULL, 20, &xButtonTaskHandle);
     xTaskCreate(vLedTask,     "Led",     1024, NULL, 2, &xLedTaskHandle);
     xTaskCreate(vFanTask,     "Fan",     1024, NULL, 3, &xFanTaskHandle);
 

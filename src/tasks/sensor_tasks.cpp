@@ -56,7 +56,7 @@ void vTempSensorTask(void *pvParameters) {
 
 void vHumTempSensorTask(void *pvParameters){
 
-    Wire.begin(I2C::SDA, I2C::SCL, I2C::frequency);
+    //Wire.begin(I2C::SDA, I2C::SCL, I2C::frequency);
     I2C_sensors I2C_sensors;
 
     //AHT10
