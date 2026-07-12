@@ -26,18 +26,18 @@ namespace I2C {
 //Rózne zmienne od czasów
 namespace Timing {
     constexpr uint32_t DEBOUNCE_MS    = 150;
-    constexpr uint32_t HOLD_MS        = 500;
+    constexpr uint32_t HOLD_MS        = 10;
     constexpr uint32_t SENSOR_READ_MS = 1000;
     constexpr uint32_t SENSOR_I2C_READ_MS = 500;
     constexpr uint32_t PID_COMPUTING   = 100;
-    constexpr uint32_t Display_data_timeout = 200;
+    constexpr uint32_t Display_data_timeout = 0;
     constexpr uint32_t Repeat_button_time = 400;
 }
 
 //Kalibracja czujników
 namespace Calibration {
     //Ile Czasu dodaje jeden klik
-    constexpr uint32_t Button_Add_Time = 10000;
+    constexpr uint32_t Button_Add_Time = 15*60*1000;
     constexpr float DS_1 = 0.0f;
     constexpr float DS_2 = 0.0f;
     constexpr float DS_3 = 0.0f;

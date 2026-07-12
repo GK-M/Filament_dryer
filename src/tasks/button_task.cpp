@@ -72,6 +72,8 @@ void vButtonTask(void *pvParameters) {
 
     for(;;){
 
+    xQueuePeek(xSetpointQueue, &pid_data,   0);
+    
     if(xQueueReceive(xButtonQueue, &buttonRAW, pdMS_TO_TICKS(200)) == pdTRUE){
 
     if(buttonRAW.timestamp - lastPress[buttonRAW.pin] < Timing::DEBOUNCE_MS) {
@@ -158,7 +160,7 @@ void vButtonTask(void *pvParameters) {
     if(buttonRAW.pin == Button::Increase){
         lastPress[buttonRAW.pin] = buttonRAW.timestamp;
 
-
+        xQueuePeek(xSetpointQueue, &pid_data,   0);
 
         switch(current_screen){
 
@@ -232,6 +234,7 @@ void vButtonTask(void *pvParameters) {
     if(buttonRAW.pin == Button::Decrease){
         lastPress[buttonRAW.pin] = buttonRAW.timestamp;
 
+        
         switch(current_screen){
 
             case Screen::Main:
