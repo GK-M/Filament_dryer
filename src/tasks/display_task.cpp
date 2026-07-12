@@ -53,31 +53,70 @@ void vDisplayTask(void *pvParameters) {
 
         case Screen::Main: {
             // Row 0: T.SET: XX°  →  XX.X°
+            char Set_Sel = (display_data.editvar == EditVar::Setpoint)? '>' : ' ';
+            char Time_Sel = (display_data.editvar == EditVar::Time)? '>' : ' ';
+
             lcd.setCursor(0, 0);
-            lcd.printf("T.SET:%3.0f", control_status.Setpoint);
+            lcd.printf("%cT.SET:%3.0f",Set_Sel, control_status.Setpoint);
             lcd.write(byte(0));
             lcd.printf(" %c %4.1f", (char)126, i2c_sensors.temp_aht);
             lcd.write(byte(0));
-            lcd.print("  ");
+            lcd.print(" ");
 
             // Row 1: Bell  HH:MM  →  HH:MM:SS
             lcd.setCursor(0, 1);
-            lcd.print(" ");
+            lcd.printf("%c",Time_Sel);
             lcd.write(byte(1));
             lcd.printf(" %02lu:%02lu %c ", timer_data.SetCzasGodz, timer_data.SetCzasMin, (char)126);
-            lcd.printf("%02lu:%02lu:%02lu", timer_data.StoperCzasGodz, timer_data.StoperCzasMin, timer_data.StoperCzasSek);
+            
+            
+            if(timer_data.SetCzas > 0 && timer_data.pTime_system > 0) {
+                uint32_t elapsed = millis() - timer_data.pTime_system;
+                if(elapsed >= timer_data.SetCzas) {
+                    timer_data.SetCzas = 0;
+                    timer_data.pTime_system = 0;
+                    timer_data.Time_elapse = 0;
+                    pid_data.Setpoint = 0;
+                    display_data.screen = Screen::DONE;
+                    xQueueOverwrite(xDisplayQueue, &display_data);
+                    xQueueOverwrite(xTimerQueue, &timer_data);
+                    xQueueOverwrite(xSetpointQueue, &pid_data);
+                } else {
+                    timer_data.Time_elapse = timer_data.SetCzas - elapsed;
+                    timer_data.StoperCzasSek  = (timer_data.Time_elapse / 1000UL) % 60UL;
+                    timer_data.StoperCzasMin  = (timer_data.Time_elapse / 60000UL) % 60UL;
+                    timer_data.StoperCzasGodz = (timer_data.Time_elapse / 3600000UL) % 12;
+                }
+            }
+
+            lcd.printf("%02lu:%02lu:%02lu", timer_data.StoperCzasGodz, timer_data.StoperCzasMin, timer_data.StoperCzasSek);  
 
             // Row 2: DS1 i DS3
             lcd.setCursor(0, 2);
-            lcd.printf("DS1:%3.0f%cC DS3:%3.0f%cC", ds_sensors.DS_1, (char)223, ds_sensors.DS_3, (char)223);
+            lcd.printf("DS1:%3.0f%cC DS2:%3.0f%cC", ds_sensors.DS_1, (char)223, ds_sensors.DS_2, (char)223);
 
             // Row 3: Wilgotnosc
             lcd.setCursor(0, 3);
-            lcd.printf("Humidity: %.1f%%    ", i2c_sensors.hum_aht);
+            lcd.printf("Humidity: %.1f%%     ", i2c_sensors.hum_aht);
             break;
         }
 
+        case Screen::DONE: {
+
+            lcd.setCursor(0, 0);
+            lcd.print("====================");
+            lcd.setCursor(0, 1);
+            lcd.print("      Suszenie      ");
+            lcd.setCursor(0, 2);
+            lcd.print("     Zakonczone     ");
+            lcd.setCursor(0, 3);
+            lcd.print("====================");
+
+            break;
+        }
         case Screen::Sensors_data: {
+
+            
             // Row 0
             lcd.setCursor(0, 0);
             lcd.print("Dane z czujnikow:   ");
@@ -118,7 +157,7 @@ void vDisplayTask(void *pvParameters) {
 
             // Row 2: Kd
             lcd.setCursor(0, 2);
-            lcd.printf("%cKd:%-5.3f  T:%3.1 C", kd_sel, pid_data.Kd,i2c_sensors.temp_aht);
+            lcd.printf("%cKd:%-5.3f  T:%5.1f C", kd_sel, pid_data.Kd,i2c_sensors.temp_aht);
 
             // Row 3: Setpoint i Output
             lcd.setCursor(0, 3);

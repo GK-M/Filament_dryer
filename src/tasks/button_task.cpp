@@ -72,6 +72,8 @@ void vButtonTask(void *pvParameters) {
 
     for(;;){
 
+    
+
     if(xQueueReceive(xButtonQueue, &buttonRAW, pdMS_TO_TICKS(200)) == pdTRUE){
 
     if(buttonRAW.timestamp - lastPress[buttonRAW.pin] < Timing::DEBOUNCE_MS) {
@@ -115,6 +117,7 @@ void vButtonTask(void *pvParameters) {
         
         lastPress[buttonRAW.pin] = buttonRAW.timestamp;
         
+        
         switch(current_screen){
 
             case Screen::Main:
@@ -138,6 +141,14 @@ void vButtonTask(void *pvParameters) {
                 display_data.mode    = mode;
                 xQueueOverwrite(xDisplayQueue, &display_data);
                 break;
+
+            case Screen::DONE:
+                current_screen = Screen::Main;
+                display_data.screen  = current_screen;
+                display_data.editvar = current_var;
+                display_data.mode    = mode;
+                xQueueOverwrite(xDisplayQueue, &display_data);
+                break;
         
         }
 
@@ -147,11 +158,14 @@ void vButtonTask(void *pvParameters) {
     if(buttonRAW.pin == Button::Increase){
         lastPress[buttonRAW.pin] = buttonRAW.timestamp;
 
+
+
         switch(current_screen){
 
             case Screen::Main:
                 switch(current_var){
                     case EditVar::Setpoint:
+                        xQueuePeek(xSetpointQueue, &pid_data, 0);
                         pid_data.Setpoint += 5.0;
                         if(pid_data.Setpoint > 100.0) pid_data.Setpoint = 100.0;
                         LOG("Setpoint is equal to: %f", pid_data.Setpoint);
@@ -159,11 +173,17 @@ void vButtonTask(void *pvParameters) {
                         break;
 
                     case EditVar::Time:
-                        timer_data.SetCzas = timer_data.SetCzas + 900000UL;
+
+                        xQueuePeek(xTimerQueue, &timer_data, 0);
+                        timer_data.SetCzas = timer_data.SetCzas + Calibration::Button_Add_Time;
                         timer_data.SetCzas = constrain(timer_data.SetCzas, 0UL, 86400000UL); // ograniczenie do 24 godzin
                         timer_data.SetCzasMin = (timer_data.SetCzas / 60000UL) % 60U;
-                        timer_data.SetCzasGodz = (timer_data.SetCzas / 3600000UL) % 12; 
+                        timer_data.SetCzasGodz = (timer_data.SetCzas / 3600000UL) % 24UL; 
 
+                        if(timer_data.pTime_system == 0){
+                            timer_data.pTime_system = millis();
+                        }
+                              
                         LOG("SetCzas is equal to: %d:%d", timer_data.SetCzasGodz, timer_data.SetCzasMin);
                         xQueueOverwrite(xTimerQueue, &timer_data);         
                         break;
@@ -219,17 +239,24 @@ void vButtonTask(void *pvParameters) {
             case Screen::Main:
                 switch(current_var){
                     case EditVar::Setpoint:
+                        xQueuePeek(xSetpointQueue, &pid_data, 0);
                         pid_data.Setpoint -= 5.0;
                         if(pid_data.Setpoint < 0.0) pid_data.Setpoint = 0.0;
                         LOG("Setpoint is equal to: %f", pid_data.Setpoint);
                         xQueueOverwrite(xSetpointQueue, &pid_data);
                         break;
                     case EditVar::Time:
-                        if(timer_data.SetCzas >= 900000UL) timer_data.SetCzas = timer_data.SetCzas - 900000UL;
+                        xQueuePeek(xTimerQueue, &timer_data, 0);
+                        if(timer_data.SetCzas >= Calibration::Button_Add_Time) timer_data.SetCzas = timer_data.SetCzas - Calibration::Button_Add_Time;
                         else timer_data.SetCzas = 0UL;
                         timer_data.SetCzas = constrain(timer_data.SetCzas, 0UL, 86400000UL); // ograniczenie do 24 godzin
                         timer_data.SetCzasMin = (timer_data.SetCzas / 60000UL) % 60U;
                         timer_data.SetCzasGodz = (timer_data.SetCzas / 3600000UL) % 24U; 
+                            
+                        if(timer_data.SetCzas == 0) {
+                            timer_data.pTime_system = 0; 
+                        }
+                        
                         LOG("SetCzas is equal to: %d:%d", timer_data.SetCzasGodz, timer_data.SetCzasMin);
                         xQueueOverwrite(xTimerQueue, &timer_data);                    
                         break;             
@@ -295,16 +322,19 @@ void vButtonTask(void *pvParameters) {
                         case Screen::Main:
                             switch(current_var){
                                 case EditVar::Setpoint:
+                                    xQueuePeek(xSetpointQueue, &pid_data, 0);
                                     pid_data.Setpoint += 5.0;
                                     if(pid_data.Setpoint > 100.0) pid_data.Setpoint = 100.0;
                                     LOG("Setpoint is equal to: %f", pid_data.Setpoint);
                                     xQueueOverwrite(xSetpointQueue, &pid_data);
                                     break;
                                 case EditVar::Time:
-                                    timer_data.SetCzas += 900000UL;
+                                    xQueuePeek(xTimerQueue, &timer_data, 0);
+                                    timer_data.SetCzas += Calibration::Button_Add_Time;
                                     if(timer_data.SetCzas > 86400000UL) timer_data.SetCzas = 86400000UL;
                                     timer_data.SetCzasMin = (timer_data.SetCzas / 60000UL) % 60U;
                                     timer_data.SetCzasGodz = (timer_data.SetCzas / 3600000UL) % 24U;
+                                    if(timer_data.pTime_system == 0) timer_data.pTime_system = millis();
                                     LOG("SetCzas is equal to: %d:%d", timer_data.SetCzasGodz, timer_data.SetCzasMin);
                                     xQueueOverwrite(xTimerQueue, &timer_data);
                                     break;
@@ -339,16 +369,19 @@ void vButtonTask(void *pvParameters) {
                         case Screen::Main:
                             switch(current_var){
                                 case EditVar::Setpoint:
+                                    xQueuePeek(xSetpointQueue, &pid_data, 0);
                                     pid_data.Setpoint -= 5.0;
                                     if(pid_data.Setpoint < 0.0) pid_data.Setpoint = 0.0;
                                     LOG("Setpoint is equal to: %f", pid_data.Setpoint);
                                     xQueueOverwrite(xSetpointQueue, &pid_data);
                                     break;
                                 case EditVar::Time:
-                                    if (timer_data.SetCzas >= 900000UL) timer_data.SetCzas -= 900000UL;
+                                    xQueuePeek(xTimerQueue, &timer_data, 0);
+                                    if (timer_data.SetCzas >= Calibration::Button_Add_Time) timer_data.SetCzas -= Calibration::Button_Add_Time;
                                     else timer_data.SetCzas = 0;
                                     timer_data.SetCzasMin = (timer_data.SetCzas / 60000UL) % 60U;
                                     timer_data.SetCzasGodz = (timer_data.SetCzas / 3600000UL) % 24U;
+                                    if(timer_data.SetCzas == 0) timer_data.pTime_system = 0;
                                     LOG("SetCzas is equal to: %d:%d", timer_data.SetCzasGodz, timer_data.SetCzasMin);
                                     xQueueOverwrite(xTimerQueue, &timer_data);
                                     break;
@@ -373,9 +406,7 @@ void vButtonTask(void *pvParameters) {
                                     if(pid_data.Kd < 0) pid_data.Kd = 0.0;
                                     LOG("Kd is equal to: %f", pid_data.Kd);
                                     xQueueOverwrite(xSetpointQueue, &pid_data);
-                                    break;
-                                    xQueueOverwrite(xSetpointQueue, &pid_data);
-                                    break;
+                                    
                             }
                         break;
                     }

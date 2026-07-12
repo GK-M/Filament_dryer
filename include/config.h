@@ -36,6 +36,8 @@ namespace Timing {
 
 //Kalibracja czujników
 namespace Calibration {
+    //Ile Czasu dodaje jeden klik
+    constexpr uint32_t Button_Add_Time = 10000;
     constexpr float DS_1 = 0.0f;
     constexpr float DS_2 = 0.0f;
     constexpr float DS_3 = 0.0f;
@@ -77,6 +79,10 @@ struct Timer_data{
     uint32_t StoperCzasSek = 0;
     uint32_t StoperCzasMin = 0;
     uint32_t StoperCzasGodz = 0;
+
+    uint32_t Time_elapse = 0;
+    uint32_t Time_system = 0;
+    uint32_t pTime_system = 0;
 };
 
 namespace Led_data

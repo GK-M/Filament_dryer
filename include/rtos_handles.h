@@ -77,7 +77,8 @@ extern TaskHandle_t xFanTaskHandle;
         Sensors_data,
         PID_cook,
         PID_fan,
-        COUNT 
+        COUNT,
+        DONE,
     };
 
     enum class EditVar {

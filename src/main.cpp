@@ -79,13 +79,13 @@ void setup() {
     xTimerQueue       = xQueueCreate(1, sizeof(Timer_data));
     xDisplayQueue     = xQueueCreate(1, sizeof(Display_data));
   
-    xTaskCreate(vOtaTask, "OTA", 2048, NULL, 20, &xOTAUpdateTaskHandle);
+    xTaskCreate(vOtaTask, "OTA", 2048, NULL, 8, &xOTAUpdateTaskHandle);
     xTaskCreate(vLogTask,     "Log",     2048, NULL, 11, &xLogTaskHandle);
     xTaskCreate(vTempSensorTask,  "Sensor",  2048, NULL, 6, &xTempSensorTaskHandle);
     xTaskCreate(vHumTempSensorTask, "BMP280", 4096, NULL, 5, &xHumTempSensorTask);
     xTaskCreate(vControlTask, "Control", 4096, NULL, 8, &xControlTaskHandle);
     xTaskCreate(vDisplayTask, "Display", 8192, NULL, 15, &xDisplayTaskHandle);
-    xTaskCreate(vButtonTask,  "Button",  8192, NULL, 10, &xButtonTaskHandle);
+    xTaskCreate(vButtonTask,  "Button",  8192, NULL, 14, &xButtonTaskHandle);
     xTaskCreate(vLedTask,     "Led",     1024, NULL, 2, &xLedTaskHandle);
     xTaskCreate(vFanTask,     "Fan",     1024, NULL, 3, &xFanTaskHandle);
 
