@@ -39,11 +39,20 @@ void vControlTask(void *pvParameters) {
     ledcAttachPin(Pin::COOK_PWM, 0); // pin, kanał
 
 
+    double prev_setpoint = pid_data.Setpoint;
+
     for (;;) {
 
-        xQueuePeek(xSetpointQueue, &pid_data, pdMS_TO_TICKS(Timing::HOLD_MS)); 
-        
-        // Dane z czujników I2C      
+        xQueuePeek(xSetpointQueue, &pid_data, pdMS_TO_TICKS(Timing::HOLD_MS));
+
+        if(prev_setpoint > 0.0 && pid_data.Setpoint == 0.0) {
+            pid.SetMode(MANUAL);
+            pid_data.Output = 0;
+            pid.SetMode(AUTOMATIC);
+        }
+        prev_setpoint = pid_data.Setpoint;
+
+        // Dane z czujników I2C
         if(!xQueuePeek(xI2CsensorsQueue,&i2c_sensors, pdMS_TO_TICKS(Timing::HOLD_MS))){
             LOG("Bład przesłania danych z kolejki xI2CsensorsQueue do ControlTask");
         }
@@ -82,6 +91,8 @@ void vControlTask(void *pvParameters) {
             LOG("Mata wystygła do zadanej temperatury %.1f pid_data.error = %d",Calibration::Temp_after_error,pid_data.error);
         }
         
+        
+
         control_status.Output = pid_data.Output;
         LOG("Output is equail: %.1f",control_status.Output);
         control_status.Setpoint = pid_data.Setpoint;

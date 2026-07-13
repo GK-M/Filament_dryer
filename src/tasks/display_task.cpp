@@ -82,6 +82,7 @@ void vDisplayTask(void *pvParameters) {
                     timer_data.pTime_system = 0;
                     timer_data.Time_elapse = 0;
                     pid_data.Setpoint = 0;
+                    
                     display_data.screen = Screen::DONE;
                     xQueueOverwrite(xDisplayQueue, &display_data);
                     xQueueOverwrite(xTimerQueue, &timer_data);
@@ -108,13 +109,10 @@ void vDisplayTask(void *pvParameters) {
                 lcd.printf("   ");
                 lcd.write(byte(2));
                 lcd.write(byte(3));
-                
             }else{
                 lcd.printf("   ");
                 lcd.write(byte(4));
                 lcd.write(byte(5));
-                
-
             }
             break;
         }

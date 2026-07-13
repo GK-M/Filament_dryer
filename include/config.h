@@ -29,7 +29,7 @@ namespace Timing {
     constexpr uint32_t HOLD_MS        = 10;
     constexpr uint32_t SENSOR_READ_MS = 1000;
     constexpr uint32_t SENSOR_I2C_READ_MS = 500;
-    constexpr uint32_t PID_COMPUTING   = 100;
+    constexpr uint32_t PID_COMPUTING   = 10;
     constexpr uint32_t Display_data_timeout = 0;
     constexpr uint32_t Repeat_button_time = 400;
 }
@@ -62,7 +62,7 @@ struct PID_data{
     double Output = 0.0;  // wyjście PID
     float Kp = 2.25, Ki = 0.05, Kd = 0.0;
     float Kp_max = 20.0, Ki_max = 10.0, Kd_max = 5.0;
-    const uint16_t SetSampleTime = 100;
+    const uint16_t SetSampleTime = 10;
     const uint16_t freq = 20000;
     const uint8_t rozdzielczosc = 10;
     bool error = false;
