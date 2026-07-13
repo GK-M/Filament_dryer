@@ -41,7 +41,7 @@ void vControlTask(void *pvParameters) {
 
     for (;;) {
 
-        xQueuePeek(xSetpointQueue, &pid_data, pdMS_TO_TICKS(250)); 
+        xQueuePeek(xSetpointQueue, &pid_data, pdMS_TO_TICKS(Timing::HOLD_MS)); 
         
         // Dane z czujników I2C      
         if(!xQueuePeek(xI2CsensorsQueue,&i2c_sensors, pdMS_TO_TICKS(Timing::HOLD_MS))){

@@ -40,8 +40,18 @@ QueueHandle_t xTimerQueue = NULL;
 QueueHandle_t xDisplayQueue = NULL;
 
 
+uint32_t ReconnetTime = 0;
+uint32_t Now_time = 0;
 void vOtaTask(void* pvParameters) {
     for(;;) {
+        
+        if((WiFi.status() != WL_CONNECTED)){
+            Now_time = millis();
+            if(Now_time - ReconnetTime >= 5000){
+                WiFi.reconnect();
+                ReconnetTime = Now_time;
+            }
+        }
         ArduinoOTA.handle();
         vTaskDelay(pdMS_TO_TICKS(100));
     }
@@ -58,7 +68,6 @@ void setup() {
     IPAddress subnet(255, 255, 255, 0);
     WiFi.config(local_IP, gateway, subnet);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    while (WiFi.status() != WL_CONNECTED) delay(500);
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
 
