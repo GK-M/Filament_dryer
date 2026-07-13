@@ -43,7 +43,7 @@ namespace Calibration {
     constexpr float DS_3 = 0.0f;
     constexpr float AHT10 = 0.0f;
     constexpr float BMP280 = 0.0f;
-    constexpr float Max_DS_temperature = 105.0f;
+    constexpr float Max_DS_temperature = 110.0f;
     constexpr float Temp_after_error = 70.0f;
 }
 

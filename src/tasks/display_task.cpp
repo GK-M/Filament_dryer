@@ -91,7 +91,7 @@ void vDisplayTask(void *pvParameters) {
                     timer_data.Time_elapse = timer_data.SetCzas - elapsed;
                     timer_data.StoperCzasSek  = (timer_data.Time_elapse / 1000UL) % 60UL;
                     timer_data.StoperCzasMin  = (timer_data.Time_elapse / 60000UL) % 60UL;
-                    timer_data.StoperCzasGodz = (timer_data.Time_elapse / 3600000UL) % 12;
+                    timer_data.StoperCzasGodz = (timer_data.Time_elapse / 3600000UL) % 24UL;
                 }
             }
 

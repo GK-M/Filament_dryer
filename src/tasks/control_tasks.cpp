@@ -80,8 +80,9 @@ void vControlTask(void *pvParameters) {
             ds_sensors.DS_2 > Calibration::Max_DS_temperature ||
             ds_sensors.DS_3 > Calibration::Max_DS_temperature) {
             pid_data.Setpoint = 0.0;
-            ledcWrite(0,0);
+            pid_data.Output = 0.0;
             pid_data.error = true;
+            xQueueOverwrite(xSetpointQueue,&pid);
             LOG("Zabezpieczenie przed zbyt dużą temperaturą aktywowane pid_data.error = %d",pid_data.error);
         }else if (ds_sensors.DS_1 < Calibration::Temp_after_error &&
                   ds_sensors.DS_2 < Calibration::Temp_after_error &&
