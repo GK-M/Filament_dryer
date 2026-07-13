@@ -42,6 +42,7 @@ QueueHandle_t xDisplayQueue = NULL;
 
 uint32_t ReconnetTime = 0;
 uint32_t Now_time = 0;
+
 void vOtaTask(void* pvParameters) {
     for(;;) {
         

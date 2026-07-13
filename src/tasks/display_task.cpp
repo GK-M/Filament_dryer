@@ -6,6 +6,7 @@
 #include "config.h"
 #include "tasks/log_task.h"
 #include <Preferences.h>
+#include <WiFi.h>
 
 
 void vDisplayTask(void *pvParameters) {
@@ -25,6 +26,10 @@ void vDisplayTask(void *pvParameters) {
 
     lcd.createChar(0, Stopnie);
     lcd.createChar(1, Dzwonek);
+    lcd.createChar(2, wifi_lewa);
+    lcd.createChar(3, wifi_prawa);
+    lcd.createChar(4, lewy_x);
+    lcd.createChar(5, prawy_x);
 
     preferences.begin("Kp", true);
     pid_data.Kp = preferences.getFloat("Kp", pid_data.Kp);
@@ -97,7 +102,20 @@ void vDisplayTask(void *pvParameters) {
 
             // Row 3: Wilgotnosc
             lcd.setCursor(0, 3);
-            lcd.printf("Humidity: %.1f%%     ", i2c_sensors.hum_aht);
+            lcd.printf("Humidity: %.1f%%", i2c_sensors.hum_aht);
+
+            if (WiFi.status() == WL_CONNECTED){
+                lcd.printf("   ");
+                lcd.write(byte(2));
+                lcd.write(byte(3));
+                
+            }else{
+                lcd.printf("   ");
+                lcd.write(byte(4));
+                lcd.write(byte(5));
+                
+
+            }
             break;
         }
 
