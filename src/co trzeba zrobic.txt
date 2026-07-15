@@ -3,7 +3,7 @@
 
 6. Dodanie Mqtt albo TCP/IP
 7. Gdy pid_data.error = true -> na ekranie odliczanie do schłodzenia 
-
+8. Dodanie screena z awarią gdy temp jest za duża 
 
 Co zrobione aktualnie:
 1. Dodanie timera do suszarki 

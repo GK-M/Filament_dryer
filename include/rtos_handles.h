@@ -79,6 +79,7 @@ extern TaskHandle_t xFanTaskHandle;
         PID_fan,
         COUNT,
         DONE,
+        TEMP_ERROR,
     };
 
     enum class EditVar {

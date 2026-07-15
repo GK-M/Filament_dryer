@@ -194,6 +194,12 @@ void vDisplayTask(void *pvParameters) {
             lcd.print("                    ");
             break;
         }
+         case Screen::TEMP_ERROR: {
+        lcd.setCursor(0,0);  
+        lcd.printf("");
+        
+        break;
+        }
 
         default:
             break;
